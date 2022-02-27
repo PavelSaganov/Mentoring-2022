@@ -1,4 +1,5 @@
 ﻿using System;
+using SuperMegaFantasticLibrary;
 
 namespace Tasks
 {
@@ -9,7 +10,8 @@ namespace Tasks
             Console.WriteLine("Your name is: ");
             string username = Console.ReadLine();
 
-            Console.WriteLine($"Hello, {username}");
+            string greetingString = WorkWithString.GetGreetingsForName(username);
+            Console.WriteLine(greetingString);
             Console.ReadKey();
         }
     }

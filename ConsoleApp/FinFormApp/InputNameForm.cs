@@ -10,11 +10,17 @@ using System.Windows.Forms;
 
 namespace FinFormApp
 {
-    public partial class Form1 : Form
+    public partial class InputNameForm : Form
     {
-        public Form1()
+        public InputNameForm()
         {
             InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            OutputHelloForm outputHelloForm = new OutputHelloForm (NameTextBox.Text);
+            outputHelloForm.ShowDialog(this);
         }
     }
 }
