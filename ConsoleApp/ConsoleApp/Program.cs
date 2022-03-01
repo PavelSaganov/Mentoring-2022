@@ -1,5 +1,5 @@
 ﻿using System;
-using SuperMegaFantasticLibrary;
+using GreetingLibrary;
 
 namespace Tasks
 {
@@ -8,9 +8,9 @@ namespace Tasks
         static void Main(string[] args)
         {
             Console.WriteLine("Your name is: ");
-            string username = Console.ReadLine();
+            var username = Console.ReadLine();
 
-            string greetingString = WorkWithString.GetGreetingsForName(username);
+            var greetingString = WorkWithString.GetGreetingsForName(username);
             Console.WriteLine(greetingString);
             Console.ReadKey();
         }

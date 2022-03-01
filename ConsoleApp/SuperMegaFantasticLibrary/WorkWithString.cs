@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SuperMegaFantasticLibrary
+namespace GreetingLibrary
 {
     public static class WorkWithString
     {
