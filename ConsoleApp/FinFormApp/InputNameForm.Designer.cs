@@ -1,5 +1,5 @@
 ﻿
-namespace FinFormApp
+namespace WinFormApp
 {
     partial class InputNameForm
     {
