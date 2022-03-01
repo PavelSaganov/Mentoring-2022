@@ -8,10 +8,5 @@ namespace SuperMegaFantasticLibrary
         {
             return $"{DateTime.Now}: Hello, {name}!";
         }
-
-        public static string ConcatinateWithHelloWorld(string str)
-        {
-            return $"Hello World! {str}";
-        }
     }
 }

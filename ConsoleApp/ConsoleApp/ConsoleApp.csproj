@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SuperMegaFantasticLibrary\SuperMegaFantasticLibrary.csproj" />
+    <ProjectReference Include="..\SuperMegaFantasticLibrary\GreetingLibrary.csproj" />
   </ItemGroup>
 
 </Project>

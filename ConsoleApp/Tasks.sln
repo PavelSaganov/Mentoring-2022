@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinFormApp", "FinFormApp\Wi
 		{82FDCD78-1E63-4EC7-9C6A-ED2DE414913B} = {82FDCD78-1E63-4EC7-9C6A-ED2DE414913B}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperMegaFantasticLibrary", "SuperMegaFantasticLibrary\SuperMegaFantasticLibrary.csproj", "{82FDCD78-1E63-4EC7-9C6A-ED2DE414913B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreetingLibrary", "SuperMegaFantasticLibrary\GreetingLibrary.csproj", "{82FDCD78-1E63-4EC7-9C6A-ED2DE414913B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
