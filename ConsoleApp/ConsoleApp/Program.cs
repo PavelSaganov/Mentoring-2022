@@ -1,7 +1,7 @@
 ﻿using System;
 using GreetingLibrary;
 
-namespace Tasks
+namespace ConsoleApp
 {
     class Program
     {
