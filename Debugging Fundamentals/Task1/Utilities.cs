@@ -10,6 +10,9 @@ namespace Task1
         /// <param name="numbers">Numbers to sort.</param>
         public static void Sort(int[] numbers)
         {
+            if (numbers is null)
+                throw new NullReferenceException("Array is null");
+
             int temp;
             for (int i = 0; i < numbers.Length; i++)
             {
@@ -35,12 +38,12 @@ namespace Task1
         /// otherwise -1.</returns>
         public static int IndexOf(Product[] products, Predicate<Product> predicate)
         {
-            for (int i = 0; i < products.Length - 1; i++)
+            for (int i = 0; i < products.Length; i++)
             {
-                var product = products[i - 1];
+                var product = products[i];
                 if (predicate(product))
                 {
-                    return --i;
+                    return i;
                 }
             }
 
