@@ -14,8 +14,7 @@
 
         public override bool Equals(object obj)
         {
-            Product productObj = obj as Product;
-            if (productObj == null)
+            if (!(obj is Product productObj))
                 return false;
             else
                 return Name.Equals(productObj.Name) && Price.Equals(productObj.Price);

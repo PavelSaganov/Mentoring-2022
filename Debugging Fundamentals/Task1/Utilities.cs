@@ -11,18 +11,18 @@ namespace Task1
         public static void Sort(int[] numbers)
         {
             if (numbers is null)
-                throw new NullReferenceException("Array is null");
+                throw new ArgumentNullException("Array is null");
 
             int temp;
             for (int i = 0; i < numbers.Length; i++)
             {
                 for (int j = i; j < numbers.Length; j++)
                 {
-                    if (numbers[i] < numbers[j])
+                    if (numbers[i] > numbers[j])
                     {
-                        temp = numbers[i];
-                        numbers[i] = temp;
+                        temp = numbers[j];
                         numbers[j] = numbers[i];
+                        numbers[i] = temp;
                     }
                 }
             }
@@ -38,6 +38,9 @@ namespace Task1
         /// otherwise -1.</returns>
         public static int IndexOf(Product[] products, Predicate<Product> predicate)
         {
+            if (products is null || predicate is null)
+                throw new ArgumentNullException("Some of the arguments are null");
+
             for (int i = 0; i < products.Length; i++)
             {
                 var product = products[i];
