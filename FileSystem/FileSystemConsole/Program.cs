@@ -9,18 +9,11 @@ namespace FileSystemVisitorConsole
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
-            var a0 = new FileSystemVisitor(Directory.GetCurrentDirectory());
-            //foreach (var item in a0)
-            //{
-            //    Console.WriteLine(item);
-            //}
-            Console.WriteLine("-------------------------------------------");
-            var a = new FileSystemVisitor(Directory.GetCurrentDirectory(), (ara) => ara.Sort() );
-            //foreach (var item in a)
-            //{
-            //    Console.WriteLine(item);
-            //}
+            Console.WriteLine("There are files of directory:");
+            var visitorWithoutSorting = new FileSystemVisitor(Directory.GetCurrentDirectory());
+            Console.WriteLine();
+            Console.WriteLine("There are sorted files of directory:");
+            var visitorWithSorting = new FileSystemVisitor(Directory.GetCurrentDirectory(), (arr) => arr.Sort() );
         }
     }
 }
