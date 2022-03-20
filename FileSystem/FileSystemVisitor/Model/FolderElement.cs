@@ -6,8 +6,10 @@ using System.Text;
 
 namespace FileSystemVisitorLibrary.Model
 {
-    public class FolderElement
+    public class FolderElement /*: IEnumerable*/
     {
         public string Name { get; set; }
+
+        //public IEnumerator GetEnumerator() => new FolderElementEnumerator()
     }
 }

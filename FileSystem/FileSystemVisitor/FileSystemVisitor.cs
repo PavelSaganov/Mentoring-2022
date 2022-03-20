@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FileSystemVisitorLibrary.Events;
+using System;
 using System.Collections;
 using System.IO;
 
@@ -7,19 +8,64 @@ namespace FileSystemVisitorLibrary
     public class FileSystemVisitor : IEnumerable
     {
         private string PathToFolder { get; set; }
-        public string[] ElementsOfFolder { get; set; }
+
+        private event EventHandler<FolderElementAddingEventArgs> NewFolderElement;
+        private event EventHandler StartSearch;
+        private event EventHandler EndSearch;
+
+        public ArrayList ElementsOfFolder { get; set; }
 
         public FileSystemVisitor(string pathToFolder)
         {
+            ElementsOfFolder = new ArrayList();
             PathToFolder = pathToFolder;
-            ElementsOfFolder = GetElementsOfFolder(); 
+
+            // Events
+            StartSearch += OnStartFilter;
+            EndSearch += OnEndFilter;
+            NewFolderElement += OnElementAdding;
+
+            // Search and add folder elements
+            StartSearch?.Invoke(this, new EventArgs());
+            AddFindedFolderElements();
+            EndSearch?.Invoke(this, new EventArgs());
         }
 
-        public FileSystemVisitor(string pathToFolder, Action<string[]> actionToFilter)
+        public FileSystemVisitor(string pathToFolder, Action<ArrayList> actionToFilter) : this(pathToFolder)
         {
-            PathToFolder = pathToFolder;
-            ElementsOfFolder = GetElementsOfFolder();
             actionToFilter.Invoke(ElementsOfFolder);
+        }
+
+        private void AddFindedFolderElements()
+        {
+            var allElements = GetElementsOfFolder();
+            for (int elementNumber = 0; elementNumber < allElements.Length; elementNumber++)
+                NewFolderElement?.Invoke(this, new FolderElementAddingEventArgs(allElements[elementNumber], elementNumber, false, false));
+        }
+
+        private void OnStartFilter(object sender, EventArgs e)
+        {
+            Console.WriteLine("Search is starting...");
+        }
+
+        private void OnEndFilter(object sender, EventArgs e)
+        {
+            Console.WriteLine("Search ended...");
+        }
+
+        private void OnElementAdding(object sender, FolderElementAddingEventArgs e)
+        {
+            if (e.AbortRequested && e.CountOfElements == 3)
+            {
+                if (ElementsOfFolder.Count > 0)
+                    ElementsOfFolder.Clear();
+                Console.WriteLine($"Adding aborted since count of elements > {3}");
+            }
+            else if (!(e.ExcludeRequested && e.CountOfElements > 3))
+            {
+                ElementsOfFolder.Add(e.ElementName);
+                Console.WriteLine($"Added new folder element: {e.ElementName}");
+            }
         }
 
         private string[] GetElementsOfFolder()
