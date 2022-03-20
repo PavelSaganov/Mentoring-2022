@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AssemblyName>FileSystemVisitorLibrary</AssemblyName>
+    <PackageId>FileSystemVisitorLibrary</PackageId>
+    <RootNamespace>FileSystemVisitorLibrary</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Model\" />
+    <Folder Include="Enumerators\" />
+  </ItemGroup>
+
+</Project>

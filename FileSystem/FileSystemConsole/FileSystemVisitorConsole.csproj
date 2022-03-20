@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Authors>FileSystemVisitorConsole</Authors>
+    <AssemblyName>FileSystemVisitorConsole</AssemblyName>
+    <RootNamespace>FileSystemVisitorConsole</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FileSystemVisitor\FileSystemVisitorLibrary.csproj" />
+  </ItemGroup>
+
+</Project>
