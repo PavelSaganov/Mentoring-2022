@@ -1,23 +1,21 @@
 using FileSystemVisitorLibrary;
 using NUnit.Framework;
 using System.Collections;
-using System.Configuration;
 using System.IO;
+using FileSystemVisitorLibrary.Configuration;
 
 namespace UnitTests
 {
     public class FileSystemVisitorTests
     {
-        private int countForAbort = 10;
-        private int countForExclude = 10;
+        private FileSystemVisitorConfiguration _config;
         private string pathToFolder = string.Empty;
 
         [SetUp]
         public void Setup()
         {
-            int.TryParse(ConfigurationManager.AppSettings.Get("CountForAbort"), out countForAbort);
-            int.TryParse(ConfigurationManager.AppSettings.Get("CountForExclude"), out countForExclude);
             pathToFolder = Directory.GetCurrentDirectory() + "\\TestFolder";
+            _config = new FileSystemVisitorConfiguration(pathToFolder);
 
             FillDirectory();
         }
@@ -42,7 +40,7 @@ namespace UnitTests
 
         private void ClearFolder(string folderName)
         {
-            DirectoryInfo dir = new DirectoryInfo(folderName);
+            var dir = new DirectoryInfo(folderName);
 
             foreach (FileInfo fi in dir.GetFiles())
             {
@@ -57,7 +55,7 @@ namespace UnitTests
         }
 
         [Test]
-        public void ReadFilesInFolder_CorrectFiles_ShouldContainAllFiles()
+        public void ReadFilesInFolder_ValidFiles_ShouldContainAllFiles()
         {
             // Arrange
             var expectedElementsOfFolder = new ArrayList {
@@ -70,7 +68,7 @@ namespace UnitTests
                 $"{pathToFolder}\\FileWithNumbers123214" };
 
             // Act
-            var fileSystemVisitor = new FileSystemVisitor(pathToFolder);
+            var fileSystemVisitor = new FileSystemVisitor(_config);
 
             // Assert
             Assert.Multiple(() =>

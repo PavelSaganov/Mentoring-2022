@@ -1,4 +1,5 @@
-﻿using FileSystemVisitorLibrary.Events;
+﻿using FileSystemVisitorLibrary.Configuration;
+using FileSystemVisitorLibrary.Events;
 using System;
 using System.Collections;
 using System.Configuration;
@@ -8,22 +9,21 @@ namespace FileSystemVisitorLibrary
 {
     public class FileSystemVisitor : IEnumerable
     {
-        // Hardcoded config. Should be changed
-        private static readonly int countForAbort = int.Parse(ConfigurationManager.AppSettings.Get("CountForAbort"));
-        private static readonly int countForExclude = int.Parse(ConfigurationManager.AppSettings.Get("CountForExclude"));
-
-        private string PathToFolder { get; set; }
-
         private event EventHandler<FolderElementAddingEventArgs> NewFolderElement;
         private event EventHandler StartSearch;
         private event EventHandler EndSearch;
+        
+        private string PathToFolder { get; set; }
 
         public ArrayList ElementsOfFolder { get; set; }
 
-        public FileSystemVisitor(string pathToFolder)
+        private readonly FileSystemVisitorConfiguration _configuration;
+
+        public FileSystemVisitor(FileSystemVisitorConfiguration configuration)
         {
             ElementsOfFolder = new ArrayList();
-            PathToFolder = pathToFolder;
+            PathToFolder = configuration.PpathToFolder;
+            _configuration = configuration;
 
             // Events
             StartSearch += OnStartFilter;
@@ -36,7 +36,14 @@ namespace FileSystemVisitorLibrary
             EndSearch?.Invoke(this, new EventArgs());
         }
 
-        public FileSystemVisitor(string pathToFolder, Action<ArrayList> actionToFilter) : this(pathToFolder)
+        /// <summary>
+        /// Constructor that invokes action to filter founded elemenents of folder.
+        /// </summary>
+        /// <param name="pathToFolder">Path to folder to work with.</param>
+        /// <param name="configuration">Configuration with necessary parameters.</param>
+        /// <param name="actionToFilter">Action to filter folder elements.</param>
+        public FileSystemVisitor(FileSystemVisitorConfiguration configuration, Action<ArrayList> actionToFilter)
+            : this(configuration)
         {
             actionToFilter.Invoke(ElementsOfFolder);
         }
@@ -48,7 +55,10 @@ namespace FileSystemVisitorLibrary
         {
             var allElements = GetElementsOfFolder();
             for (int elementNumber = 0; elementNumber < allElements.Length; elementNumber++)
-                NewFolderElement?.Invoke(this, new FolderElementAddingEventArgs(allElements[elementNumber], elementNumber, false, false));
+            {
+                NewFolderElement?.Invoke(this, 
+                    new FolderElementAddingEventArgs(allElements[elementNumber], elementNumber, _configuration.ExcludeRequested, _configuration.AbortRequested));
+            }
         }
 
         private void OnStartFilter(object sender, EventArgs e)
@@ -68,13 +78,13 @@ namespace FileSystemVisitorLibrary
         /// <param name="e">Arguments/</param>
         private void OnElementAdding(object sender, FolderElementAddingEventArgs e)
         {
-            if (e.AbortRequested && e.CountOfElements == countForAbort)
+            if (e.AbortRequested && e.CountOfElements == _configuration.CountForAbort)
             {
                 if (ElementsOfFolder.Count > 0)
                     ElementsOfFolder.Clear();
-                Console.WriteLine($"Adding aborted since count of elements > {countForAbort}");
+                Console.WriteLine($"Adding aborted since count of elements > {_configuration.CountForAbort}");
             }
-            else if (!(e.ExcludeRequested && e.CountOfElements > countForExclude))
+            else if (!(e.ExcludeRequested && e.CountOfElements > _configuration.CountForExclude))
             {
                 ElementsOfFolder.Add(e.ElementName);
                 Console.WriteLine($"Added new folder element: {e.ElementName}");
