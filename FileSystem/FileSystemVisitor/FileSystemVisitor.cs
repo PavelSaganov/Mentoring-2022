@@ -1,126 +1,130 @@
 ﻿using FileSystemVisitorLibrary.Configuration;
+using FileSystemVisitorLibrary.CustomCollections;
 using FileSystemVisitorLibrary.Events;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 
 namespace FileSystemVisitorLibrary
 {
     public class FileSystemVisitor : IEnumerable
     {
-        public FileSystemVisitor(FileSystemVisitorConfiguration configuration)
+        public FileSystemVisitor(string pathToFolder)
         {
-            ElementsOfFolder = new ArrayList();
-            PathToFolder = configuration.PathToFolder;
-            _configuration = configuration;
-
-            // Events
-            StartSearch += OnStartFilter;
-            EndSearch += OnEndFilter;
-            NewFolderElement += OnElementAdding;
-
-            // Search and add folder elements
-            StartSearch?.Invoke(this, new EventArgs());
-            AddFindedFolderElements();
-            EndSearch?.Invoke(this, new EventArgs());
+            PathToFolder = pathToFolder;
         }
 
         /// <summary>
         /// Constructor that invokes action to filter founded elemenents of folder.
         /// </summary>
         /// <param name="pathToFolder">Path to folder to work with.</param>
-        /// <param name="configuration">Configuration with necessary parameters.</param>
-        /// <param name="actionToFilter">Action to filter folder elements.</param>
-        public FileSystemVisitor(FileSystemVisitorConfiguration configuration, Predicate<IEnumerable> filterForFolderElements)
-            : this(configuration)
+        /// <param name="filterForFolders">Predicate to filter folders.</param>
+        public FileSystemVisitor(string pathToFolder, Predicate<DirectoryInfo> filterForFolders)
+            : this(pathToFolder)
         {
-            this.filterForFolderElements = filterForFolderElements;
+            FilterForDirectories = filterForFolders;
         }
 
-        public event EventHandler<FolderElementAddingEventArgs> NewFolderElement;
+        /// <summary>
+        /// Constructor that invokes action to filter founded elemenents of folder.
+        /// </summary>
+        /// <param name="pathToFolder">Path to folder to work with.</param>
+        /// <param name="filterForFiles">Predicate to filter files.</param>
+        public FileSystemVisitor(string pathToFolder, Predicate<FileInfo> filterForFiles)
+            : this(pathToFolder)
+        {
+            FilterForFiles = filterForFiles;
+        }
+
+        /// <summary>
+        /// Constructor that invokes action to filter founded elemenents of folder.
+        /// </summary>
+        /// <param name="pathToFolder">Path to folder to work with.</param>
+        /// <param name="filterForFolders">Predicate to filter folders.</param>
+        /// <param name="filterForFiles">Predicate to filter files.</param>
+        public FileSystemVisitor(string pathToFolder, Predicate<DirectoryInfo> filterForFolders, Predicate<FileInfo> filterForFiles)
+            : this(pathToFolder, filterForFolders)
+        {
+            FilterForFiles = filterForFiles;
+        }
+
         public event EventHandler<FileFoundEventArgs> FileFound;
-        public event EventHandler<FolderElementAddingEventArgs> FilteredFileFound;
-        public event EventHandler<FolderElementAddingEventArgs> FilteredDirectoryFound;
-        public event EventHandler<FolderElementAddingEventArgs> DirectoryFound;
+        public event EventHandler<DirectoryFoundEventArgs> DirectoryFound;
+        public event EventHandler<FileFoundEventArgs> FilteredFileFound;
+        public event EventHandler<DirectoryFoundEventArgs> FilteredDirectoryFound;
         public event EventHandler StartSearch;
         public event EventHandler EndSearch;
 
         private string PathToFolder { get; set; }
 
-        public ArrayList ElementsOfFolder { get; set; }
+        Predicate<DirectoryInfo> FilterForDirectories { get; set; }
 
-        Predicate<IEnumerable> filterForFolderElements { get; set; }
+        Predicate<FileInfo> FilterForFiles { get; set; }
 
-        private readonly FileSystemVisitorConfiguration _configuration;
-
-        /// <summary>
-        /// Filling PathToFolder property by folder elements name. Also invokes handler of adding new element.
-        /// </summary>
-        private void AddFindedFolderElements()
+        public CustomInfoCollection<FileInfo> GetFiles()
         {
-            var allElements = GetElementsOfFolder();
-            for (int elementNumber = 0; elementNumber < allElements.Length; elementNumber++)
-            {
-                NewFolderElement?.Invoke(this, 
-                    new FolderElementAddingEventArgs(allElements[elementNumber], elementNumber, _configuration.ExcludeRequested, _configuration.AbortRequested));
-            }
-        }
-
-        public IEnumerable GetFiles()
-        {
+            StartSearch?.Invoke(this, new EventArgs());
             ValidatePathToDirectory();
 
             var directory = new DirectoryInfo(PathToFolder);
+            var files = directory.GetFiles();
 
-            var notFilteredFiles = directory.GetFiles();
-
-            if (filterForFolderElements.Invoke(notFilteredFiles))
+            for (int i = 0; i < files.Length; i++)
             {
-
+                if (FilterForFiles != null && FilterForFiles(files[i]))
+                    OnFilteredFileFound(this, new FileFoundEventArgs(files[i], files, true, true));
+                else
+                    OnFileFound(this, new FileFoundEventArgs(files[i], files, true, true));
             }
 
-            return notFilteredFiles;
+            EndSearch?.Invoke(this, new EventArgs());
+
+            var result = new CustomInfoCollection<FileInfo>(files);
+            return result;
         }
 
-        private void ValidatePathToDirectory()
+        public CustomInfoCollection<DirectoryInfo> GetDirectories()
         {
-            if (Directory.Exists(PathToFolder))
-                throw new DirectoryNotFoundException();
+            StartSearch?.Invoke(this, new EventArgs());
+            ValidatePathToDirectory();
+
+            var directory = new DirectoryInfo(PathToFolder);
+            var subdirectories = directory.GetDirectories();
+
+            for (int i = 0; i < subdirectories.Length; i++)
+                if (FilterForDirectories != null && FilterForDirectories(subdirectories[i]))
+                    OnFilteredDirectoryFound(this, new DirectoryFoundEventArgs(subdirectories[i], subdirectories, true, true));
+                else
+                    OnDirectoryFound(this, new DirectoryFoundEventArgs(subdirectories[i], subdirectories, true, true));
+
+            EndSearch?.Invoke(this, new EventArgs());
+
+            var result = new CustomInfoCollection<DirectoryInfo>(subdirectories);
+            return result;
         }
 
-        private void OnStartFilter(object sender, EventArgs e)
-        {
-            StartSearch?.Invoke(sender, e);
-        }
+        #region Handlers
+        private void OnFileFound(object sender, FileFoundEventArgs e) => FileFound?.Invoke(sender, e);
 
-        private void OnEndFilter(object sender, EventArgs e)
-        {
-            EndSearch?.Invoke(sender, e);
-        }
+        private void OnFilteredFileFound(object sender, FileFoundEventArgs e) => FilteredFileFound?.Invoke(sender, e);
 
-        /// <summary>
-        /// Handler to add new element. Can abort adding, add new element or skip element.
-        /// </summary>
-        /// <param name="sender">Sender.</param>
-        /// <param name="e">Arguments/</param>
-        private void OnElementAdding(object sender, FolderElementAddingEventArgs e)
+        private void OnDirectoryFound(object sender, DirectoryFoundEventArgs e) => DirectoryFound?.Invoke(sender, e);
+
+        private void OnFilteredDirectoryFound(object sender, DirectoryFoundEventArgs e) => FilteredDirectoryFound?.Invoke(sender, e);
+        #endregion
+
+        public void MoveToDirectory(string directoryName)
         {
-            if (e.AbortRequested && e.CountOfElements == _configuration.CountForAbort)
+            if (directoryName == "../")
+                PathToFolder = Directory.GetParent(PathToFolder).FullName;
+            else
             {
-                if (ElementsOfFolder.Count > 0)
-                    ElementsOfFolder.Clear();
-                Console.WriteLine($"Adding aborted since count of elements > {_configuration.CountForAbort}");
-            }
-            else if (!(e.ExcludeRequested && e.CountOfElements > _configuration.CountForExclude))
-            {
-                ElementsOfFolder.Add(e.ElementName);
-                Console.WriteLine($"Added new folder element: {e.ElementName}");
+                var newPath = $"{PathToFolder}//{directoryName}";
+                if (Directory.Exists(newPath))
+                    PathToFolder = $"{PathToFolder}//{directoryName}";
             }
         }
-
-        private string[] GetElementsOfFolder() => Directory.GetFileSystemEntries(PathToFolder);
 
         /// <summary>
         /// Get enumerator of class.
@@ -128,10 +132,16 @@ namespace FileSystemVisitorLibrary
         /// <returns>Enumerator based on ElementsOfFolderEnumerator</returns>
         public IEnumerator GetEnumerator()
         {
-            foreach (var element in ElementsOfFolder)
+            foreach (var element in new List<int> { 1, 2, 3 })
             {
                 yield return element;
             }
+        }
+
+        private void ValidatePathToDirectory()
+        {
+            if (!Directory.Exists(PathToFolder))
+                throw new DirectoryNotFoundException();
         }
     }
 }

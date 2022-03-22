@@ -14,9 +14,9 @@ namespace FileSystemVisitorLibrary.Events
             AbortRequires = abortRequires;
         }
 
-        protected TElement FolderElement { get; set; }
+        public TElement FolderElement { get; set; }
 
-        protected IEnumerable<TElement> FolderElementQuery { get; set; }
+        public IEnumerable<TElement> FolderElementQuery { get; set; }
 
         public bool ExcludeRequires { get; set; }
 

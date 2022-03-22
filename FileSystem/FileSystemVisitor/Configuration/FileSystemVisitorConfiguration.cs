@@ -22,8 +22,8 @@ namespace FileSystemVisitorLibrary.Configuration
 
         public FileSystemVisitorConfiguration(string pathToFolder = null)
         {
-            PathToFolder = pathToFolder ?? ConfigurationManager.AppSettings.Get("PathToFolder");
             CountForAbort = int.Parse(ConfigurationManager.AppSettings.Get("CountForAbort"));
+            PathToFolder = pathToFolder ?? ConfigurationManager.AppSettings.Get("PathToFolder");
             CountForExclude = int.Parse(ConfigurationManager.AppSettings.Get("CountForExclude"));
             AbortRequested = bool.Parse(ConfigurationManager.AppSettings.Get("AbortRequested"));
             ExcludeRequested = bool.Parse(ConfigurationManager.AppSettings.Get("ExcludeRequested"));

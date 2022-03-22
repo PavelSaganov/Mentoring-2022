@@ -1,21 +1,19 @@
 using FileSystemVisitorLibrary;
 using NUnit.Framework;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
-using FileSystemVisitorLibrary.Configuration;
 
 namespace UnitTests
 {
     public class FileSystemVisitorTests
     {
-        private FileSystemVisitorConfiguration _config;
         private string pathToFolder = string.Empty;
 
         [SetUp]
         public void Setup()
         {
             pathToFolder = Directory.GetCurrentDirectory() + "\\TestFolder";
-            _config = new FileSystemVisitorConfiguration(pathToFolder);
 
             FillDirectory();
         }
@@ -26,10 +24,10 @@ namespace UnitTests
             Directory.CreateDirectory($"{pathToFolder}\\TestFolder1");
             Directory.CreateDirectory($"{pathToFolder}\\asdd");
             Directory.CreateDirectory($"{pathToFolder}\\SomeInfo");
-            File.Create($"{pathToFolder}\\FirstFile");
             File.Create($"{pathToFolder}\\fiile.txt");
-            File.Create($"{pathToFolder}\\Wow_its_a_test_file");
             File.Create($"{pathToFolder}\\FileWithNumbers123214");
+            File.Create($"{pathToFolder}\\FirstFile");
+            File.Create($"{pathToFolder}\\Wow_its_a_test_file");
         }
 
         [TearDown]
@@ -46,23 +44,20 @@ namespace UnitTests
         public void ReadFilesInFolder_ValidFiles_ShouldContainAllFiles()
         {
             // Arrange
-            var expectedElementsOfFolder = new ArrayList {
-                $"{pathToFolder}\\TestFolder1",
-                $"{pathToFolder}\\asdd",
-                $"{pathToFolder}\\SomeInfo",
-                $"{pathToFolder}\\FirstFile",
-                $"{pathToFolder}\\fiile.txt",
-                $"{pathToFolder}\\Wow_its_a_test_file",
-                $"{pathToFolder}\\FileWithNumbers123214" };
+            var fileSystemVisitor = new FileSystemVisitor(pathToFolder);
+            var expectedElementsOfFolder = new List<FileInfo> {
+                new FileInfo($"{pathToFolder}\\fiile.txt"),
+                new FileInfo($"{pathToFolder}\\FileWithNumbers123214"),
+                new FileInfo($"{pathToFolder}\\FirstFile"),
+            new FileInfo($"{pathToFolder}\\Wow_its_a_test_file") };
 
             // Act
-            var fileSystemVisitor = new FileSystemVisitor(_config);
+            var actual = (ICollection)fileSystemVisitor.GetFiles();
 
             // Assert
             Assert.Multiple(() =>
             {
-                foreach (var element in fileSystemVisitor.ElementsOfFolder)
-                    Assert.Contains(element, expectedElementsOfFolder);
+                Assert.Contains(expectedElementsOfFolder, actual);
             });
         }
     }
