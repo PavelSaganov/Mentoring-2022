@@ -4,16 +4,22 @@ using System.Text;
 
 namespace FileSystemVisitorLibrary.Events
 {
-    public class FolderElementFoundEventArgs<TElement>
+    public abstract class FolderElementFoundEventArgs<TElement>
     {
-        public FolderElementFoundEventArgs(TElement folderElement, IEnumerable<TElement> folderElementQuery)
+        protected FolderElementFoundEventArgs(TElement folderElement, IEnumerable<TElement> folderElementQuery, bool excludeRequires, bool abortRequires)
         {
             FolderElement = folderElement;
             FolderElementQuery = folderElementQuery;
+            ExcludeRequires = excludeRequires;
+            AbortRequires = abortRequires;
         }
 
         protected TElement FolderElement { get; set; }
 
         protected IEnumerable<TElement> FolderElementQuery { get; set; }
+
+        public bool ExcludeRequires { get; set; }
+
+        public bool AbortRequires { get; set; }
     }
 }

@@ -39,13 +39,13 @@ namespace FileSystemVisitorLibrary
             this.filterForFolderElements = filterForFolderElements;
         }
 
-        private event EventHandler<FolderElementAddingEventArgs> NewFolderElement;
-        private event EventHandler<FileFoundEventArgs> FileFound;
-        private event EventHandler<FolderElementAddingEventArgs> FilteredFileFound;
-        private event EventHandler<FolderElementAddingEventArgs> FilteredDirectoryFound;
-        private event EventHandler<FolderElementAddingEventArgs> DirectoryFound;
-        private event EventHandler StartSearch;
-        private event EventHandler EndSearch;
+        public event EventHandler<FolderElementAddingEventArgs> NewFolderElement;
+        public event EventHandler<FileFoundEventArgs> FileFound;
+        public event EventHandler<FolderElementAddingEventArgs> FilteredFileFound;
+        public event EventHandler<FolderElementAddingEventArgs> FilteredDirectoryFound;
+        public event EventHandler<FolderElementAddingEventArgs> DirectoryFound;
+        public event EventHandler StartSearch;
+        public event EventHandler EndSearch;
 
         private string PathToFolder { get; set; }
 
@@ -93,13 +93,11 @@ namespace FileSystemVisitorLibrary
         private void OnStartFilter(object sender, EventArgs e)
         {
             StartSearch?.Invoke(sender, e);
-            Console.WriteLine("Search is starting...");
         }
 
         private void OnEndFilter(object sender, EventArgs e)
         {
             EndSearch?.Invoke(sender, e);
-            Console.WriteLine("Search ended...");
         }
 
         /// <summary>
