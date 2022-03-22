@@ -35,22 +35,10 @@ namespace UnitTests
         [TearDown]
         public void Rollback()
         {
-            ClearFolder(pathToFolder);
-        }
-
-        private void ClearFolder(string folderName)
-        {
-            var dir = new DirectoryInfo(folderName);
-
-            foreach (FileInfo fi in dir.GetFiles())
+            if (Directory.Exists(pathToFolder))
             {
-                fi.Delete();
-            }
-
-            foreach (DirectoryInfo di in dir.GetDirectories())
-            {
-                ClearFolder(di.FullName);
-                di.Delete();
+                var dir = new DirectoryInfo(pathToFolder);
+                dir.Delete(true);
             }
         }
 

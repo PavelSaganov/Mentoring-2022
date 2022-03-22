@@ -2,6 +2,7 @@
 using FileSystemVisitorLibrary.Events;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 
@@ -9,20 +10,10 @@ namespace FileSystemVisitorLibrary
 {
     public class FileSystemVisitor : IEnumerable
     {
-        private event EventHandler<FolderElementAddingEventArgs> NewFolderElement;
-        private event EventHandler StartSearch;
-        private event EventHandler EndSearch;
-        
-        private string PathToFolder { get; set; }
-
-        public ArrayList ElementsOfFolder { get; set; }
-
-        private readonly FileSystemVisitorConfiguration _configuration;
-
         public FileSystemVisitor(FileSystemVisitorConfiguration configuration)
         {
             ElementsOfFolder = new ArrayList();
-            PathToFolder = configuration.PpathToFolder;
+            PathToFolder = configuration.PathToFolder;
             _configuration = configuration;
 
             // Events
@@ -42,11 +33,27 @@ namespace FileSystemVisitorLibrary
         /// <param name="pathToFolder">Path to folder to work with.</param>
         /// <param name="configuration">Configuration with necessary parameters.</param>
         /// <param name="actionToFilter">Action to filter folder elements.</param>
-        public FileSystemVisitor(FileSystemVisitorConfiguration configuration, Action<ArrayList> actionToFilter)
+        public FileSystemVisitor(FileSystemVisitorConfiguration configuration, Predicate<IEnumerable> filterForFolderElements)
             : this(configuration)
         {
-            actionToFilter.Invoke(ElementsOfFolder);
+            this.filterForFolderElements = filterForFolderElements;
         }
+
+        private event EventHandler<FolderElementAddingEventArgs> NewFolderElement;
+        private event EventHandler<FileFoundEventArgs> FileFound;
+        private event EventHandler<FolderElementAddingEventArgs> FilteredFileFound;
+        private event EventHandler<FolderElementAddingEventArgs> FilteredDirectoryFound;
+        private event EventHandler<FolderElementAddingEventArgs> DirectoryFound;
+        private event EventHandler StartSearch;
+        private event EventHandler EndSearch;
+
+        private string PathToFolder { get; set; }
+
+        public ArrayList ElementsOfFolder { get; set; }
+
+        Predicate<IEnumerable> filterForFolderElements { get; set; }
+
+        private readonly FileSystemVisitorConfiguration _configuration;
 
         /// <summary>
         /// Filling PathToFolder property by folder elements name. Also invokes handler of adding new element.
@@ -61,13 +68,37 @@ namespace FileSystemVisitorLibrary
             }
         }
 
+        public IEnumerable GetFiles()
+        {
+            ValidatePathToDirectory();
+
+            var directory = new DirectoryInfo(PathToFolder);
+
+            var notFilteredFiles = directory.GetFiles();
+
+            if (filterForFolderElements.Invoke(notFilteredFiles))
+            {
+
+            }
+
+            return notFilteredFiles;
+        }
+
+        private void ValidatePathToDirectory()
+        {
+            if (Directory.Exists(PathToFolder))
+                throw new DirectoryNotFoundException();
+        }
+
         private void OnStartFilter(object sender, EventArgs e)
         {
+            StartSearch?.Invoke(sender, e);
             Console.WriteLine("Search is starting...");
         }
 
         private void OnEndFilter(object sender, EventArgs e)
         {
+            EndSearch?.Invoke(sender, e);
             Console.WriteLine("Search ended...");
         }
 
