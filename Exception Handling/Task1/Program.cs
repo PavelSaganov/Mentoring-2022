@@ -16,7 +16,7 @@ namespace Task1
         private static char GetFirstCharacterOf(string str)
         {
             if (string.IsNullOrEmpty(str))
-                throw new Exception("String is null!");
+                throw new FormatException("Value is null! or whitespace");
 
             return str.FirstOrDefault();
         }
