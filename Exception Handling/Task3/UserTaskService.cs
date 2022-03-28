@@ -1,4 +1,5 @@
 ﻿using System;
+using Task3.CustomExceptions;
 using Task3.DoNotChange;
 
 namespace Task3
@@ -15,17 +16,17 @@ namespace Task3
         public int AddTaskForUser(int userId, UserTask task)
         {
             if (userId < 0)
-                return -1;
+                throw new NegativeIdException("Invalid userId");
 
             var user = _userDao.GetUser(userId);
             if (user == null)
-                return -2;
+                throw new ObjectNotFoundException("User not found");
 
             var tasks = user.Tasks;
             foreach (var t in tasks)
             {
                 if (string.Equals(task.Description, t.Description, StringComparison.OrdinalIgnoreCase))
-                    return -3;
+                    throw new AlreadyExistsException("The task is already exists");
             }
 
             tasks.Add(task);

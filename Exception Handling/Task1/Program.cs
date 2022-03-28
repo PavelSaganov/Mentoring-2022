@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 
 namespace Task1
 {
@@ -18,7 +17,7 @@ namespace Task1
             if (string.IsNullOrEmpty(str))
                 throw new FormatException("Value is null! or whitespace");
 
-            return str.FirstOrDefault();
+            return str[0];
         }
     }
 }
