@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Runtime.Serialization;
 
 namespace Task3.CustomExceptions
 {
@@ -14,6 +13,10 @@ namespace Task3.CustomExceptions
         { }
 
         public ObjectNotFoundException(string? message, Exception? innerException) : base(message, innerException)
+        { }
+
+        protected ObjectNotFoundException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         { }
     }
 }

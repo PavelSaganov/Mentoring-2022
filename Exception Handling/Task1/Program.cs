@@ -1,4 +1,5 @@
 ﻿using System;
+using Task1.CustomExceptions;
 
 namespace Task1
 {
@@ -7,15 +8,21 @@ namespace Task1
         private static void Main(string[] args)
         {
             Console.WriteLine("Please enter any string:");
-            string inputed = Console.ReadLine();
-
-            Console.WriteLine($"First character of {inputed} is {GetFirstCharacterOf(inputed)}");
+            string stringValue = Console.ReadLine();
+            try
+            {
+                Console.WriteLine($"First character of {stringValue} is {GetFirstCharacterOf(stringValue)}");
+            }
+            catch (NullOrEmptyStringException e)
+            {
+                Console.WriteLine($"Founded {e.GetType()} exception with the message: {e.Message}");
+            }
         }
 
         private static char GetFirstCharacterOf(string str)
         {
-            if (string.IsNullOrEmpty(str))
-                throw new FormatException("Value is null! or whitespace");
+            if (string.IsNullOrWhiteSpace(str))
+                throw new NullOrEmptyStringException("Value is null or whitespace!");
 
             return str[0];
         }
