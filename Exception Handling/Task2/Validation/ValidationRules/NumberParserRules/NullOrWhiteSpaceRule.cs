@@ -20,7 +20,7 @@ namespace Task2.Validation.ValidationRules.NumberParserRules
 
         public override bool IsValid()
         {
-            return string.IsNullOrWhiteSpace(stringValue);
+            return !string.IsNullOrWhiteSpace(stringValue);
         }
     }
 }

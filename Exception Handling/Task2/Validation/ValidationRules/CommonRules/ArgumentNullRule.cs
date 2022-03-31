@@ -20,7 +20,7 @@ namespace Task2.Validation.ValidationRules.CommonRules
 
         public bool IsValid()
         {
-            return _argument is null;
+            return _argument != null;
         }
     }
 }

@@ -20,7 +20,10 @@ namespace Task2.Validation.ValidationRules.NumberParserRules
 
         public override bool IsValid()
         {
-            if (stringValue[0] == '-' || stringValue[0] == '+')
+            if (stringValue is null)
+                return true;
+
+            if (stringValue?.Length > 0 && (stringValue[0] == '-' || stringValue[0] == '+'))
                 return true;
             return false;
         }

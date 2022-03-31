@@ -20,6 +20,9 @@ namespace Task2.Validation.ValidationRules.NumberParserRules
 
         public override bool IsValid()
         {
+            if (stringValue is null)
+                return true;
+
             if (stringValue.Length > 1 && char.IsDigit(stringValue[1]))
                 return true;
             return false;

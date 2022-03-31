@@ -15,18 +15,18 @@ namespace Task2.Validation.Validators
         {
             Rules.Add(new ArgumentNullRule(stringValue));
             Rules.Add(new NullOrWhiteSpaceRule(stringValue));
-            Rules.Add(new AllCharactersIsDigitRule(stringValue));
-            Rules.Add(new FirstSymbolIsPlusOrMinusRule(stringValue));
-            Rules.Add(new IsSecondSymbolIsNumberRule(stringValue));
+            Rules.Add(new IsCorrectFormatRule(stringValue));
             Rules.Add(new IsOutOfRangeAsIntRule(stringValue));
+            _stringValue = stringValue;
         }
 
-        public NumberParseValidator(List<IValidationRule> customRules)
+        public NumberParseValidator(List<IValidationRule> customRules, string stringValue)
         {
             Rules = customRules;
+            _stringValue = stringValue;
         }
 
-        public List<IValidationRule> Rules { get; set; }
+        public List<IValidationRule> Rules { get; set; } = new List<IValidationRule>();
 
         public bool IsSuccess()
         {
@@ -56,16 +56,17 @@ namespace Task2.Validation.Validators
                     throw new ArgumentNullException(nameof(_stringValue), ruleMessage);
                 }
 
-                if (ruleType.Equals(typeof(NullOrWhiteSpaceRule))
-                    && (ruleType.Equals(typeof(AllCharactersIsDigitRule)) || ruleType.Equals(typeof(FirstSymbolIsPlusOrMinusRule)))
-                    && ruleType.Equals(typeof(IsSecondSymbolIsNumberRule)))
-                {
+                if (HaveTypeOfRule(notPassedRules, typeof(IsCorrectFormatRule)))
                     throw new FormatException(ruleMessage);
-                }
 
-                if (ruleType.Equals(typeof(IsOutOfRangeAsIntRule)))
+                if (HaveTypeOfRule(notPassedRules, typeof(IsOutOfRangeAsIntRule)))
                     throw new OverflowException(ruleMessage);
             }
+        }
+
+        private bool HaveTypeOfRule(IEnumerable<IValidationRule> collectionOfRules, Type typeOfRule)
+        {
+            return collectionOfRules.FirstOrDefault(r => r.GetType().Equals(typeOfRule)) != null;
         }
     }
 }
