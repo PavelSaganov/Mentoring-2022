@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using Task3.DoNotChange;
 using Task3.Tests.Stubs;
+using Task3.Validation.Validators;
 
 namespace Task3.Tests
 {
@@ -9,6 +10,7 @@ namespace Task3.Tests
     {
         private readonly UserTaskController _controller;
         private readonly IUserDao _userDao;
+        private readonly IValidator _validator;
 
         public UserTaskControllerTests()
         {

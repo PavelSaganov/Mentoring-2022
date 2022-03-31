@@ -1,12 +1,14 @@
 ﻿using System;
 using Task3.CustomExceptions;
 using Task3.DoNotChange;
+using Task3.Validation.Validators;
 
 namespace Task3
 {
     public class UserTaskService
     {
         private readonly IUserDao _userDao;
+        private readonly IValidator _validator;
 
         public UserTaskService(IUserDao userDao)
         {
@@ -15,21 +17,14 @@ namespace Task3
 
         public int AddTaskForUser(int userId, UserTask task)
         {
-            if (userId < 0)
-                throw new NegativeIdException("Invalid userId");
-
-            var user = _userDao.GetUser(userId);
-            if (user == null)
-                throw new ObjectNotFoundException("User not found");
-
-            var tasks = user.Tasks;
-            foreach (var t in tasks)
+            var validator = new AddTaskForUserValidator(userId, task, _userDao);
+            if (validator.IsSuccess())
             {
-                if (string.Equals(task.Description, t.Description, StringComparison.OrdinalIgnoreCase))
-                    throw new AlreadyExistsException("The task is already exists");
+                var user = _userDao.GetUser(userId);
+                var tasks = user.Tasks;
+                tasks.Add(task);
             }
-
-            tasks.Add(task);
+            else validator.ThrowAllExceptions();
 
             return 0;
         }
