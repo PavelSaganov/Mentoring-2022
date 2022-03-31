@@ -13,10 +13,14 @@ namespace Task2.Validation.Validators
 
         public NumberParseValidator(string stringValue)
         {
-            Rules.Add(new ArgumentNullRule(stringValue));
-            Rules.Add(new NullOrWhiteSpaceRule(stringValue));
-            Rules.Add(new IsCorrectFormatRule(stringValue));
-            Rules.Add(new IsOutOfRangeAsIntRule(stringValue));
+            Rules = new List<IValidationRule>
+            {
+                new ArgumentNullRule(stringValue),
+                new NullOrWhiteSpaceRule(stringValue),
+                new IsCorrectFormatRule(stringValue),
+                new IsOutOfRangeAsIntRule(stringValue)
+            };
+
             _stringValue = stringValue;
         }
 
@@ -26,7 +30,7 @@ namespace Task2.Validation.Validators
             _stringValue = stringValue;
         }
 
-        public List<IValidationRule> Rules { get; set; } = new List<IValidationRule>();
+        public List<IValidationRule> Rules { get; set; }
 
         public bool IsSuccess()
         {
