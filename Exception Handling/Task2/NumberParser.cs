@@ -11,7 +11,7 @@ namespace Task2
             int intValue = 0;
 
             if (stringValue is null)
-                throw new ArgumentNullException();
+                throw new ArgumentNullException(nameof(stringValue), "Inputed parameter is null");
 
             if (!string.IsNullOrWhiteSpace(stringValue)
                 && (stringValue.All(character => char.IsDigit(character))
