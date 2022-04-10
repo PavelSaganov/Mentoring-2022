@@ -1,0 +1,120 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
+using System.Text;
+using ReflexionConsoleApp.Attributes;
+
+namespace ReflexionConsoleApp.Configuration
+{
+    public class ConfigurationComponentBase
+    {
+        public Dictionary<string, string> ReadAllSettings()
+        {
+            var settings = new Dictionary<string, string>();
+            var type = GetType();
+            foreach (var property in type.GetProperties())
+            {
+                foreach (var attributeOfProperty in property.GetCustomAttributes(false))
+                {
+                    if (attributeOfProperty is ConfigurationManagerAttribute configManagerItem)
+                        settings.Add(configManagerItem.SettingName, ConfigurationManager.AppSettings[configManagerItem.SettingName]);
+                    else if (attributeOfProperty is FileConfigurationAttribute fileConfigItem)
+                    {
+                        using (StreamReader reader = new StreamReader(fileConfigItem.PathToSettingsFile))
+                        {
+                            string line = reader.ReadToEnd();
+                            var lineKeyValue = line.Split(':');
+                            if (lineKeyValue.Length == 2)
+                                settings.Add(fileConfigItem.SettingName, lineKeyValue[1]);
+                        }
+                    }
+                }
+            }
+
+            return settings;
+        }
+
+        public KeyValuePair<string, string> ReadSetting(string key)
+        {
+            var type = GetType();
+            foreach (var property in type.GetProperties())
+            {
+                foreach (var attributeOfProperty in property.GetCustomAttributes(false))
+                {
+                    if (attributeOfProperty is ConfigurationManagerAttribute configManagerItem && key == configManagerItem.SettingName)
+                        return new KeyValuePair<string, string>(key, ConfigurationManager.AppSettings[key]);
+                    else if (attributeOfProperty is FileConfigurationAttribute fileConfigItem && key == fileConfigItem.SettingName)
+                    {
+                        using (StreamReader reader = new StreamReader(fileConfigItem.PathToSettingsFile))
+                        {
+                            string line = reader.ReadToEnd();
+                            var lineKeyValue = line.Split(':');
+                            if (lineKeyValue.Length == 2)
+                                return new KeyValuePair<string, string>(lineKeyValue[0], lineKeyValue[1]);
+                        }
+                    }
+                }
+            }
+
+            return new KeyValuePair<string, string>();
+        }
+
+        public void AddSetting(string key, string value)
+        {
+            var type = GetType();
+            foreach (var property in type.GetProperties())
+            {
+                foreach (var attributeOfProperty in property.GetCustomAttributes(false))
+                {
+                    if (attributeOfProperty is ConfigurationManagerAttribute && attributeOfProperty is FileConfigurationAttribute)
+                        Console.WriteLine("aaaaa");
+                    if (attributeOfProperty is ConfigurationManagerAttribute configManagerItem)
+                        WriteToConfig(key, value, configManagerItem);
+                    else if (attributeOfProperty is FileConfigurationAttribute fileConfigItem)
+                        WriteToConfig(key, value, fileConfigItem);
+                }
+            }
+        }
+
+        private static void WriteToConfig(string key, string value, ConfigurationManagerAttribute configManagerItem)
+        {
+            var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            var settings = configFile.AppSettings.Settings;
+
+            // if setting with this name exists
+            if (key == configManagerItem.SettingName)
+            {
+                if (settings[configManagerItem.SettingName] == null)
+                    settings.Add(configManagerItem.SettingName, value);
+                else
+                    settings[configManagerItem.SettingName].Value = value;
+
+                configFile.Save(ConfigurationSaveMode.Modified);
+                ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
+            }
+        }
+
+        private void WriteToConfig(string key, string value, FileConfigurationAttribute fileConfigItem)
+        {
+            using (StreamWriter writer = new StreamWriter(fileConfigItem.PathToSettingsFile, true))
+            {
+                var settings = ReadAllSettings();
+                if (settings.ContainsKey(key))
+                {
+                    foreach (var keyValue in settings)
+                        writer.WriteLine($"{keyValue.Key}:{keyValue.Value}");
+                }
+                else writer.WriteLine($"{fileConfigItem.SettingName}:{value}");
+            }
+        }
+
+        private static void WriteAllToFile(string str, string path)
+        {
+            using (StreamWriter writer = new StreamWriter(path, false))
+            {
+                writer.WriteLine(str);
+            }
+        }
+    }
+}
