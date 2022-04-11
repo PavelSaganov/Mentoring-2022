@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="ReflectionApp.Sdk">
+      <HintPath>..\..\..\..\Repositories\Mentoring-2022\ReflexionConsoleApp\ReflectionApp.Sdk\bin\Debug\netcoreapp3.1\ReflectionApp.Sdk.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
