@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace ReflexionConsoleApp.Attributes
+namespace ReflectionApp.Sdk.Attributes
 {
     public class ConfigurationManagerAttribute : Attribute
     {

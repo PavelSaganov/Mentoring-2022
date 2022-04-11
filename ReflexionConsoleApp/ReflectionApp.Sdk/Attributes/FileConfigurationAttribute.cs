@@ -1,11 +1,10 @@
 ﻿using System;
 using System.IO;
 
-namespace ReflexionConsoleApp.Attributes
+namespace ReflectionApp.Sdk.Attributes
 {
     public class FileConfigurationAttribute : Attribute
     {
-
         public FileConfigurationAttribute(string settingName)
         {
             SettingName = settingName;
