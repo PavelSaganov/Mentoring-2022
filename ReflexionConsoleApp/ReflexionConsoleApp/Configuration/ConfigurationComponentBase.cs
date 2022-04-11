@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
+using ReflectionApp.Sdk;
 using ReflexionConsoleApp.Attributes;
 
 namespace ReflexionConsoleApp.Configuration
 {
-    public class ConfigurationComponentBase
+    public class ConfigurationComponentBase : IConfigurationBase
     {
         public Dictionary<string, string> ReadAllSettings()
         {
