@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace ReflexionConsoleApp.Attributes
 {
@@ -20,7 +18,7 @@ namespace ReflexionConsoleApp.Attributes
             {
                 string workingDirectory = Directory.GetCurrentDirectory();
                 string projectDirectory = Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName;
-                return $"{projectDirectory}//settings.txt";
+                return $"{projectDirectory}\\settings.txt";
             }
         }
 

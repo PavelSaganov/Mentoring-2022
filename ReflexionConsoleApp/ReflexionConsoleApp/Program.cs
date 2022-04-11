@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using ReflexionConsoleApp.Configuration;
 
 namespace ReflexionConsoleApp
@@ -10,13 +9,16 @@ namespace ReflexionConsoleApp
         {
             //var config = new ConfigurationManagerProvider();
             //config.AddSetting("TaskNumber", "1");
-            //using (StreamReader reader = new StreamReader(Directory.GetCurrentDirectory()))
-            //{
-            //    int a = 2 + 3;
-            //}
 
             var config = new FileManagerProvider();
             config.AddSetting("CountOfThreads", "1");
+
+            foreach (var item in config.ReadAllSettings())
+            {
+                Console.WriteLine(item.Value);
+            }
+
+            //config.ReadAllSettings();
 
 
         }

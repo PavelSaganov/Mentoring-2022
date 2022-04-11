@@ -1,5 +1,4 @@
-﻿using System.IO;
-using ReflexionConsoleApp.Attributes;
+﻿using ReflexionConsoleApp.Attributes;
 
 namespace ReflexionConsoleApp.Configuration
 {

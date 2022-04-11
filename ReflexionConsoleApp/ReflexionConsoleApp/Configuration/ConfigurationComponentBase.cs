@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
-using System.Text;
 using ReflexionConsoleApp.Attributes;
 
 namespace ReflexionConsoleApp.Configuration
@@ -23,7 +21,7 @@ namespace ReflexionConsoleApp.Configuration
                     {
                         using (StreamReader reader = new StreamReader(fileConfigItem.PathToSettingsFile))
                         {
-                            string line = reader.ReadToEnd();
+                            string line = reader.ReadLine();
                             var lineKeyValue = line.Split(':');
                             if (lineKeyValue.Length == 2)
                                 settings.Add(fileConfigItem.SettingName, lineKeyValue[1]);
@@ -68,7 +66,10 @@ namespace ReflexionConsoleApp.Configuration
                 foreach (var attributeOfProperty in property.GetCustomAttributes(false))
                 {
                     if (attributeOfProperty is ConfigurationManagerAttribute && attributeOfProperty is FileConfigurationAttribute)
-                        Console.WriteLine("aaaaa");
+                    {
+                        WriteToConfig(key, value, attributeOfProperty as ConfigurationManagerAttribute);
+                        WriteToConfig(key, value, attributeOfProperty as FileConfigurationAttribute);
+                    }
                     if (attributeOfProperty is ConfigurationManagerAttribute configManagerItem)
                         WriteToConfig(key, value, configManagerItem);
                     else if (attributeOfProperty is FileConfigurationAttribute fileConfigItem)
@@ -97,7 +98,7 @@ namespace ReflexionConsoleApp.Configuration
 
         private void WriteToConfig(string key, string value, FileConfigurationAttribute fileConfigItem)
         {
-            using (StreamWriter writer = new StreamWriter(fileConfigItem.PathToSettingsFile, true))
+            using (StreamWriter writer = new StreamWriter(fileConfigItem.PathToSettingsFile, false))
             {
                 var settings = ReadAllSettings();
                 if (settings.ContainsKey(key))
@@ -106,14 +107,6 @@ namespace ReflexionConsoleApp.Configuration
                         writer.WriteLine($"{keyValue.Key}:{keyValue.Value}");
                 }
                 else writer.WriteLine($"{fileConfigItem.SettingName}:{value}");
-            }
-        }
-
-        private static void WriteAllToFile(string str, string path)
-        {
-            using (StreamWriter writer = new StreamWriter(path, false))
-            {
-                writer.WriteLine(str);
             }
         }
     }
