@@ -1,10 +1,15 @@
 ﻿using System;
+using ReflectionApp.Sdk;
 using ReflectionApp.Sdk.Attributes;
 
-namespace ReflexionConsoleApp.Configuration__In_dll_
+namespace ReflexionConsoleApp.Configuration
 {
-    public class ConfigurationManagerProvider : ConfigurationComponentBase
+    public class ConfigurationManagerComponent : ConfigurationComponentBase
     {
+        public ConfigurationManagerComponent(IConfigurationProvider configurationProvider)
+            : base(configurationProvider)
+        { }
+
         // Random properties without any sense
 
         [ConfigurationManager("TaskNumber")]

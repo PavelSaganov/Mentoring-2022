@@ -10,9 +10,9 @@ namespace ReflexionConsoleApp.ConfigurationPlugins
 {
     public static class ConfigurationPlugin
     {
-        public static List<IConfigurationBase> ReadAllPlugins()
+        public static List<IConfigurationProvider> ReadAllPlugins()
         {
-            var pluginsLists = new List<IConfigurationBase>();
+            var pluginsLists = new List<IConfigurationProvider>();
             var files = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.GetFiles("*.dll");
 
             foreach (var file in files)
@@ -20,11 +20,11 @@ namespace ReflexionConsoleApp.ConfigurationPlugins
                 var assembly = Assembly.LoadFile(file.FullName);
 
                 var pluginTypes = assembly.GetTypes().Where(t =>
-                    typeof(IConfigurationBase).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract).ToArray();
+                    typeof(IConfigurationProvider).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract).ToArray();
 
                 foreach (var pluginType in pluginTypes)
                 {
-                    var pluginInstance = Activator.CreateInstance(pluginType) as IConfigurationBase;
+                    var pluginInstance = Activator.CreateInstance(pluginType) as IConfigurationProvider;
                     pluginsLists.Add(pluginInstance);
                 }
             }
