@@ -16,24 +16,25 @@ namespace ReflexionConsoleApp
             var configurationPlugins = ConfigurationPlugin.ReadAllPlugins();
             Console.WriteLine($"{configurationPlugins.Count} config plugin(s) founded!");
 
-            var configurationManagerComponent = new ConfigurationManagerComponent(configurationPlugins.FirstOrDefault());
-
             Console.WriteLine("Adding settings...");
-            configurationManagerComponent.AddSetting("CountOfThreads", "5");   
-            configurationManagerComponent.AddSetting("MainThreadName", "MainThread");   
+            foreach (var configProvider in configurationPlugins)
+            {
+                var managerComponent = new ConfigurationManagerComponent(configProvider);
 
-            configurationManagerComponent.AddSetting("MainUrl", "http://localhost:80");   
-            configurationManagerComponent.AddSetting("MaxRandomNumber", "1750");   
-
-            Console.WriteLine("All settings:");
+                managerComponent.AddSetting("CountOfThreads", "5");
+                managerComponent.AddSetting("MainThreadName", "MainThread");
+                managerComponent.AddSetting("MainUrl", "http://localhost:80");
+                managerComponent.AddSetting("MaxRandomNumber", "1750");
+            }
 
             foreach (var plugin in configurationPlugins)
             {
-                Console.WriteLine($"\n{plugin.GetType().Name} plugin:");
-                foreach (var setting in plugin.ReadAllSettings())
-                {
-                    Console.WriteLine($"{setting.Key}:{setting.Value}");
-                }
+                Console.WriteLine($"\n{plugin.GetType().Name} plugin settings:");
+                Console.WriteLine($"CountOfThreads:{plugin.ReadSetting("CountOfThreads")}");
+                Console.WriteLine($"MainThreadName:{plugin.ReadSetting("MainThreadName")}");
+
+                Console.WriteLine($"MainUrl:{plugin.ReadSetting("MainUrl")}");
+                Console.WriteLine($"MaxRandomNumber:{plugin.ReadSetting("MaxRandomNumber")}");
             }
         }
     }
