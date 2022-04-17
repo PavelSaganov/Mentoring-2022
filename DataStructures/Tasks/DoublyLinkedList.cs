@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Tasks.DoNotChange;
+using Tasks.Enumerators;
 
 namespace Tasks
 {
@@ -101,24 +102,40 @@ namespace Tasks
 
         public void Remove(T item)
         {
-            DoublyLinkedListNode<T> previousNode = null;
             var node = Head;
 
-            while (node != null && !node.Data.Equals(item))
+            if (Head == null)
+                return;
+
+            if (Head.Data.Equals(item))
             {
-                previousNode = node;
-                node = node.Next;
+                Head.Next.Previous = null;
+                Head = Head.Next;
             }
 
-            if (previousNode == null)
+            while (node.Next != null && !node.Data.Equals(item))
             {
-                Head = Head.Next;
-                Head.Previous = null;
+                if (node.Next.Data.Equals(item))
+                {
+                    if (node.Next.Next != null)
+                    {
+                        node.Next.Next.Previous = node;
+                    }
+
+                    node.Next = node.Next.Next;
+                }
+                else node = node.Next;
             }
         }
 
         public T RemoveAt(int index)
         {
+            if (Head == null)
+            {
+                throw new IndexOutOfRangeException();
+            }
+
+            T returnedData = Head.Data;
             DoublyLinkedListNode<T> previousNode = null;
             var node = Head;
 
@@ -130,23 +147,33 @@ namespace Tasks
             for (int i = 0; i < index; i++)
             {
                 node = node.Next;
+                returnedData = node.Data;
             }
 
             if (node.Next != null)
             {
                 node.Next.Previous = previousNode;
             }
+            else
+            {
+                node.Previous.Next = null;
+            }
 
             if (previousNode != null)
             {
                 previousNode.Next = node.Next;
             }
-            return Head.Data;
+            return returnedData;
         }
 
-        private DoublyLinkedList<T> GetNodeAt(int index)
+        private DoublyLinkedListNode<T> GetNodeAt(int index)
         {
-            var node = this;
+            if (Head == null || index < 0)
+            {
+                throw new IndexOutOfRangeException();
+            }
+
+            var node = Head;
 
             for (int i = 0; i < index; i++)
             {
@@ -154,15 +181,13 @@ namespace Tasks
                 {
                     throw new IndexOutOfRangeException();
                 }
-
-                //node = node.Next;
             }
 
             return node;
         }
         public IEnumerator<T> GetEnumerator()
         {
-            throw new NotImplementedException();
+            return new DoublyLinkedListEnumerator<T>(this);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
