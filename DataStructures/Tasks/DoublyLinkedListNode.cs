@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Tasks
+﻿namespace Tasks
 {
     public class DoublyLinkedListNode<T>
     {

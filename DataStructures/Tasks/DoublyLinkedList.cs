@@ -6,185 +6,185 @@ using Tasks.Enumerators;
 
 namespace Tasks
 {
-    public class DoublyLinkedList<T> : IDoublyLinkedList<T>, IEnumerable<T>
+    public class DoublyLinkedList<T> : IDoublyLinkedList<T>
     {
         private DoublyLinkedListNode<T> Head { get; set; }
 
-        public int Length
-        {
-            get
-            {
-                var node = Head;
-                int countOfNodes = 0;
+        private DoublyLinkedListNode<T> Tail { get; set; }
 
-                while (node != null)
-                {
-                    node = node.Next;
-                    countOfNodes++;
-                }
-                return countOfNodes;
-            }
-        }
+        public int Length { get; private set; } = 0;
 
         public void Add(T e)
         {
-            DoublyLinkedListNode<T> previousNode = null;
-            var node = Head;
-
-            while (node != null)
-            {
-                previousNode = node;
-                node = node.Next;
-            }
+            var newNode = new DoublyLinkedListNode<T>(e);
 
             if (Head == null)
             {
-                Head = new DoublyLinkedListNode<T>(e);
-                Head.Data = e;
-            }
-            else if (node == null)
-            {
-                node = new DoublyLinkedListNode<T>(e);
-                node.Previous = previousNode;
-                previousNode.Next = node;
+                Head = newNode;
+                Tail = Head;
             }
             else
             {
-                node.Data = e;
+                Tail.Next = newNode;
+                newNode.Previous = Tail;
             }
+
+            UpdateTail();
+            UpdateLength();
         }
 
         public void AddAt(int index, T e)
         {
-            DoublyLinkedListNode<T> previousNode = null;
-            var node = Head;
+            var newNode = new DoublyLinkedListNode<T>(e);
+            var node = GetNodeAt(index);
 
-            for (int i = 0; i < index; i++)
-            {
-                previousNode = node;
-                node = node.Next;
-            }
-
-            if (Head == null)
+            if (index == 0)
             {
                 Head = new DoublyLinkedListNode<T>(e);
-                Head.Data = e;
+                UpdateLength();
+                UpdateTail();
+                return;
             }
-            else if (node == null)
+
+            if (node == null)
             {
-                node = new DoublyLinkedListNode<T>(e);
-                node.Previous = previousNode;
-                previousNode.Next = node;
-                node.Data = e;
+                var prevNode = GetNodeAt(index - 1);
+                prevNode.Next = newNode;
+                UpdateLength();
+                UpdateTail();
+                return;
             }
-            else
+
+            if (node.Previous != null)
             {
-                node.Data = e;
+                newNode.Next = node.Previous.Next;
+                node.Previous.Next = newNode;
             }
+
+            if (newNode.Next != null)
+            {
+                newNode.Next.Previous = newNode;
+            }
+            newNode.Previous = node.Previous;
+            node.Data = newNode.Data;
+
+            UpdateLength();
+            UpdateTail();
         }
 
         public T ElementAt(int index)
         {
-            var node = Head;
-
-            if (index < 0 || index >= Length || node == null)
-            {
-                throw new IndexOutOfRangeException();
-            }
-
-            for (int i = 0; i < index; i++)
-            {
-                node = node.Next;
-            }
-
+            ValidateIndex(index);
+            var node = GetNodeAt(index);
             return node.Data;
         }
 
         public void Remove(T item)
         {
-            var node = Head;
-
-            if (Head == null)
-                return;
-
-            if (Head.Data.Equals(item))
-            {
-                Head.Next.Previous = null;
-                Head = Head.Next;
-            }
-
-            while (node.Next != null && !node.Data.Equals(item))
-            {
-                if (node.Next.Data.Equals(item))
-                {
-                    if (node.Next.Next != null)
-                    {
-                        node.Next.Next.Previous = node;
-                    }
-
-                    node.Next = node.Next.Next;
-                }
-                else node = node.Next;
-            }
+            RemoveNode(Head, item);
+            UpdateLength();
+            UpdateTail();
         }
 
         public T RemoveAt(int index)
         {
-            if (Head == null)
+            ValidateIndex(index);
+            var node = GetNodeAt(index);
+            var returnedData = RemoveNode(node, node.Data);
+            
+            UpdateLength();
+            UpdateTail();
+            return returnedData;
+        }
+
+        private T RemoveNode(DoublyLinkedListNode<T> firstNode, T item)
+        {
+            var returnedData = firstNode.Data;
+            if (firstNode != null && firstNode.Data.Equals(item))
             {
-                throw new IndexOutOfRangeException();
+                if (firstNode.Next != null)
+                {
+                    firstNode.Next.Previous = firstNode.Previous;
+                }
+                if (firstNode.Previous != null)
+                {
+                    firstNode.Previous.Next = firstNode.Next;
+                }
+                else
+                {
+                    Head = firstNode.Next;
+                }
+
+                return returnedData;
+            }
+            while (firstNode != null && !firstNode.Data.Equals(item))
+            {
+                firstNode = firstNode.Next;
+            }
+            if (firstNode == null)
+            {
+                return returnedData;
+            }
+            if (firstNode.Next != null)
+            {
+                firstNode.Next.Previous = firstNode.Previous;
+            }
+            if (firstNode.Previous != null)
+            {
+                firstNode.Previous.Next = firstNode.Next;
             }
 
-            T returnedData = Head.Data;
-            DoublyLinkedListNode<T> previousNode = null;
-            var node = Head;
-
-            if (index < 0 || index >= Length || node == null)
-            {
-                throw new IndexOutOfRangeException();
-            }
-
-            for (int i = 0; i < index; i++)
-            {
-                node = node.Next;
-                returnedData = node.Data;
-            }
-
-            if (node.Next != null)
-            {
-                node.Next.Previous = previousNode;
-            }
-            else
-            {
-                node.Previous.Next = null;
-            }
-
-            if (previousNode != null)
-            {
-                previousNode.Next = node.Next;
-            }
             return returnedData;
         }
 
         private DoublyLinkedListNode<T> GetNodeAt(int index)
         {
-            if (Head == null || index < 0)
-            {
-                throw new IndexOutOfRangeException();
-            }
-
             var node = Head;
+
+            if (node == null)
+            {
+                return Head;
+            }
 
             for (int i = 0; i < index; i++)
             {
-                if (node == null)
-                {
-                    throw new IndexOutOfRangeException();
-                }
+                node = node.Next;
             }
 
             return node;
         }
+
+        private void ValidateIndex(int index)
+        {
+            if (Head == null || index < 0 || index >= Length)
+            {
+                throw new IndexOutOfRangeException();
+            }
+        }
+
+        private void UpdateLength()
+        {
+            var node = Head;
+            int countOfNodes = 0;
+
+            while (node != null)
+            {
+                node = node.Next;
+                countOfNodes++;
+            }
+            Length = countOfNodes;
+        }
+
+        private void UpdateTail()
+        {
+            var temp = Head;
+            while (temp.Next != null)
+            {
+                temp = temp.Next;
+            }
+            Tail = temp;
+        }
+
         public IEnumerator<T> GetEnumerator()
         {
             return new DoublyLinkedListEnumerator<T>(this);
