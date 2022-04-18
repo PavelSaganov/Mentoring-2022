@@ -12,7 +12,12 @@ namespace ReflexionConsoleApp.PluginSelector
         public IConfigurationProvider GetConfigurationProvider(ConfigProvider configProvider)
         {
             var configurationPlugins = ConfigurationPlugin.ReadAllPlugins();
-            
+            switch (configProvider)
+            {
+                case ConfigProvider.FileProfider:
+                    
+                    break;
+            }
             return null;
         }
     }

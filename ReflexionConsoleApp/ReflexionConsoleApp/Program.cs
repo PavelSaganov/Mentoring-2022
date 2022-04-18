@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using ReflectionApp.Sdk;
-using ReflexionConsoleApp.Configuration;
+using ReflectionApp.Sdk.PluginEnums;
 using ReflexionConsoleApp.ConfigurationPlugins;
 
 namespace ReflexionConsoleApp
@@ -16,26 +11,45 @@ namespace ReflexionConsoleApp
             var configurationPlugins = ConfigurationPlugin.ReadAllPlugins();
             Console.WriteLine($"{configurationPlugins.Count} config plugin(s) founded!");
 
-            Console.WriteLine("Adding settings...");
-            foreach (var configProvider in configurationPlugins)
-            {
-                var managerComponent = new ConfigurationManagerComponent(configProvider);
+            FileConfigTest();
+            ConfigManagerTest();
+        }
 
-                managerComponent.AddSetting("CountOfThreads", "5");
-                managerComponent.AddSetting("MainThreadName", "MainThread");
-                managerComponent.AddSetting("MainUrl", "http://localhost:80");
-                managerComponent.AddSetting("MaxRandomNumber", "1750");
-            }
+        private static void ConfigManagerTest()
+        {
+            var configManagerPlugin = ConfigurationPlugin.ReadPlugin(ConfigProvider.ConfigManagerProvider);
 
-            foreach (var plugin in configurationPlugins)
-            {
-                Console.WriteLine($"\n{plugin.GetType().Name} plugin settings:");
-                Console.WriteLine($"CountOfThreads:{plugin.ReadSetting("CountOfThreads")}");
-                Console.WriteLine($"MainThreadName:{plugin.ReadSetting("MainThreadName")}");
+            Console.WriteLine("AppSettings before changing:");
+            Console.WriteLine($"MainUrl:{configManagerPlugin.ReadSetting("MainUrl")}");
+            Console.WriteLine($"MaxRandomNumber:{configManagerPlugin.ReadSetting("MaxRandomNumber")}");
 
-                Console.WriteLine($"MainUrl:{plugin.ReadSetting("MainUrl")}");
-                Console.WriteLine($"MaxRandomNumber:{plugin.ReadSetting("MaxRandomNumber")}");
-            }
+            configManagerPlugin.AddSetting("MaxRandomNumber", "1790");
+            configManagerPlugin.AddSetting("MainUrl", "http://localhost:8080");
+
+            Console.WriteLine();
+            Console.WriteLine("AppSettings after changing:");
+            Console.WriteLine($"MainUrl:{configManagerPlugin.ReadSetting("MainUrl")}");
+            Console.WriteLine($"MaxRandomNumber:{configManagerPlugin.ReadSetting("MaxRandomNumber")}");
+            Console.WriteLine();
+        }
+
+        private static void FileConfigTest()
+        {
+            var fileConfigPlugin = ConfigurationPlugin.ReadPlugin(ConfigProvider.FileProfider);
+
+            Console.WriteLine();
+            Console.WriteLine("file config before changing:");
+            Console.WriteLine($"CountOfThreads:{fileConfigPlugin.ReadSetting("CountOfThreads")}");
+            Console.WriteLine($"MainThreadName:{fileConfigPlugin.ReadSetting("MainThreadName")}");
+
+            fileConfigPlugin.AddSetting("CountOfThreads", "15");
+            fileConfigPlugin.AddSetting("MainThreadName", "MainThread2");
+
+            Console.WriteLine();
+            Console.WriteLine("file config after changing:");
+            Console.WriteLine($"CountOfThreads:{fileConfigPlugin.ReadSetting("CountOfThreads")}");
+            Console.WriteLine($"MainThreadName:{fileConfigPlugin.ReadSetting("MainThreadName")}");
+            Console.WriteLine();
         }
     }
 }
