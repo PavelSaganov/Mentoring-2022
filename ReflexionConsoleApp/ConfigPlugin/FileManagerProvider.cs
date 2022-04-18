@@ -1,4 +1,5 @@
 ﻿using ReflectionApp.Sdk.Attributes;
+using ReflectionApp.Sdk.PluginEnums;
 
 namespace ConfigPlugin
 {
@@ -6,10 +7,10 @@ namespace ConfigPlugin
     {
         // Random properties without any sense
 
-        [FileConfiguration("CountOfThreads")]
+        [FileConfiguration("CountOfThreads", ConfigProvider.FileProfider)]
         public int CountOfThreads { get; set; }
 
-        [FileConfiguration("MainThreadName")]
+        [FileConfiguration("MainThreadName", ConfigProvider.FileProfider)]
         public string MainThreadName { get; set; }
     }
 }

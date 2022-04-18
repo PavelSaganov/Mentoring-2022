@@ -1,13 +1,15 @@
 ﻿using System;
 using System.IO;
+using ReflectionApp.Sdk.PluginEnums;
 
 namespace ReflectionApp.Sdk.Attributes
 {
     public class FileConfigurationAttribute : Attribute
     {
-        public FileConfigurationAttribute(string settingName)
+        public FileConfigurationAttribute(string settingName, ConfigProvider provider)
         {
             SettingName = settingName;
+            Provider = provider;
         }
 
         // Path to settings file is hardcoded
@@ -20,6 +22,8 @@ namespace ReflectionApp.Sdk.Attributes
                 return $"{projectDirectory}\\settings.txt";
             }
         }
+
+        public ConfigProvider Provider { get; set; }
 
         public string SettingName { get; set; }
     }

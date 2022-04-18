@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using ReflectionApp.Sdk.PluginEnums;
 
 namespace ReflectionApp.Sdk.Attributes
 {
@@ -8,9 +9,12 @@ namespace ReflectionApp.Sdk.Attributes
     {
         public string SettingName { get; set; }
 
-        public ConfigurationManagerAttribute(string settingName)
+        public ConfigProvider Provider { get; set; }
+
+        public ConfigurationManagerAttribute(string settingName, ConfigProvider provider)
         {
             SettingName = settingName;
+            Provider = provider;
         }
     }
 }
