@@ -1,7 +1,7 @@
 ﻿GO
 
-INSERT INTO [dbo].[Address] ([Id], [Street], [City], [State], [ZipCode]) VALUES (0, N'4', N'2', N'1', N'gg454g2g')
-INSERT INTO [dbo].[Address] ([Id], [Street], [City], [State], [ZipCode]) VALUES (1, N'Good st.', N'13', N'1', N'232')
+INSERT INTO [dbo].[Address] ([Id], [Street], [City], [State], [ZipCode]) VALUES (0, N'4', N'2', N'Gomel', N'gg454g2g')
+INSERT INTO [dbo].[Address] ([Id], [Street], [City], [State], [ZipCode]) VALUES (1, N'Good st.', N'Mozyr', N'1', N'232')
 INSERT INTO [dbo].[Address] ([Id], [Street], [City], [State], [ZipCode]) VALUES (2, N'Wordsworth Road', N'Amble', N'1', N'12f43g4')
 INSERT INTO [dbo].[Address] ([Id], [Street], [City], [State], [ZipCode]) VALUES (3, N'St Andrew''s Road', N'Red Bluff', N'2', N'213543231')
 INSERT INTO [dbo].[Address] ([Id], [Street], [City], [State], [ZipCode]) VALUES (4, N'Nightingale Road', N'Suffolk', N'2', N'gr3t4gr')
