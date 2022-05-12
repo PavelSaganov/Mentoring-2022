@@ -1,11 +1,15 @@
 ﻿CREATE TRIGGER [EmployeeInsertTrigger]
 ON Employee
-FOR INSERT
+INSTEAD OF INSERT
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	INSERT INTO Company ([Name], [AddressId]) VALUES (0, N'Lakeman Associates', 1)
+	INSERT INTO Company ([Name], [AddressId])
 		SELECT I.CompanyName, I.AddressId
+		FROM INSERTED I
+
+	INSERT INTO Employee ([AddressId], [PersonId], [CompanyName], [Position], [EmployeeName])
+		SELECT I.AddressId, I.PersonId, I.CompanyName, I.Position, I.EmployeeName
 		FROM INSERTED I
 END
