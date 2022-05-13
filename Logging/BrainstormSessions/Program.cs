@@ -1,8 +1,10 @@
 using System;
+using System.Net;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
+using Serilog.Sinks.Email;
 
 namespace BrainstormSessions
 {
@@ -10,17 +12,6 @@ namespace BrainstormSessions
     {
         public static void Main(string[] args)
         {
-            //Log.Logger = new LoggerConfiguration()
-            //.MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-            //.Enrich.FromLogContext()
-            //.WriteTo.Console()
-            //.WriteTo.Email(fromEmail: "module9testacc@gmail.com",
-            //                toEmail: "Module9testAcc@gmail.com",
-            //                mailServer: "smtp.elasticemail.com")
-            //.CreateLogger();
-
-            //Log.Information("test information");
-
             CreateHostBuilder(args).Build().Run();
         }
 
@@ -30,9 +21,27 @@ namespace BrainstormSessions
                 {
                     webBuilder.UseStartup<Startup>();
                 })
-                .UseSerilog((hostingContext, loggerConfiguration) =>
+                .UseSerilog((context, services, configuration) =>
                 {
-                    loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration);
+                    configuration
+                    .Enrich.FromLogContext()
+                    .WriteTo.Console()
+                    .WriteTo.File(path: "Logs/log.txt")
+                    .WriteTo.Email(GetEmailConnectionInfo());
                 });
+
+        private static EmailConnectionInfo GetEmailConnectionInfo()
+        {
+            return new EmailConnectionInfo()
+            {
+                EmailSubject = "Log from module9",
+                MailServer = "smtp.gmail.com",
+                FromEmail = "module9testacc@gmail.com",
+                ToEmail = "sahpavval@gmail.com",
+                Port = 587,
+                EnableSsl = true,
+                NetworkCredentials = new NetworkCredential("module9testacc@gmail.com", "aspqsboajuqxpsux")
+            };
+        }
     }
 }
