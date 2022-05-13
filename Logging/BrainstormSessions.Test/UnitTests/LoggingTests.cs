@@ -10,6 +10,9 @@ using log4net.Appender;
 using log4net.Config;
 using log4net.Core;
 using Moq;
+using Serilog;
+using Serilog.Sinks.InMemory;
+using Serilog.Sinks.InMemory.Assertions;
 using Xunit;
 
 namespace BrainstormSessions.Test.UnitTests
@@ -17,11 +20,18 @@ namespace BrainstormSessions.Test.UnitTests
     public class LoggingTests : IDisposable
     {
         private readonly MemoryAppender _appender;
+        private readonly Serilog.ILogger _logger;
 
         public LoggingTests()
         {
             _appender = new MemoryAppender();
             BasicConfigurator.Configure(_appender);
+
+            // Serilog
+            _logger = new LoggerConfiguration()
+            .WriteTo.InMemory()
+            .MinimumLevel.Debug()
+            .CreateLogger();
         }
 
         public void Dispose()
@@ -36,14 +46,17 @@ namespace BrainstormSessions.Test.UnitTests
             var mockRepo = new Mock<IBrainstormSessionRepository>();
             mockRepo.Setup(repo => repo.ListAsync())
                 .ReturnsAsync(GetTestSessions());
-            var controller = new HomeController(mockRepo.Object);
+
+            var controller = new HomeController(mockRepo.Object, _logger);
 
             // Act
             var result = await controller.Index();
 
             // Assert
-            var logEntries = _appender.GetEvents();
-            Assert.True(logEntries.Any(l => l.Level == Level.Info), "Expected Info messages in the logs");
+            InMemorySink.Instance
+                .Should()
+                .HaveMessage("[Index] call session repository ListAsync...")
+                .WithLevel(Serilog.Events.LogEventLevel.Information);
         }
 
         [Fact]
@@ -53,7 +66,7 @@ namespace BrainstormSessions.Test.UnitTests
             var mockRepo = new Mock<IBrainstormSessionRepository>();
             mockRepo.Setup(repo => repo.ListAsync())
                 .ReturnsAsync(GetTestSessions());
-            var controller = new HomeController(mockRepo.Object);
+            var controller = new HomeController(mockRepo.Object, _logger);
             controller.ModelState.AddModelError("SessionName", "Required");
             var newSession = new HomeController.NewSessionModel();
 
@@ -61,8 +74,10 @@ namespace BrainstormSessions.Test.UnitTests
             var result = await controller.Index(newSession);
 
             // Assert
-            var logEntries = _appender.GetEvents();
-            Assert.True(logEntries.Any(l => l.Level == Level.Warn), "Expected Warn messages in the logs");
+            InMemorySink.Instance
+                .Should()
+                .HaveMessage("[Index] Model state is invalid. 1 errors in ModelState was founded")
+                .WithLevel(Serilog.Events.LogEventLevel.Warning);
         }
 
         [Fact]
@@ -70,15 +85,17 @@ namespace BrainstormSessions.Test.UnitTests
         {
             // Arrange & Act
             var mockRepo = new Mock<IBrainstormSessionRepository>();
-            var controller = new IdeasController(mockRepo.Object);
+            var controller = new IdeasController(mockRepo.Object, _logger);
             controller.ModelState.AddModelError("error", "some error");
 
             // Act
             var result = await controller.CreateActionResult(model: null);
 
             // Assert
-            var logEntries = _appender.GetEvents();
-            Assert.True(logEntries.Any(l => l.Level == Level.Error), "Expected Error messages in the logs");
+            InMemorySink.Instance
+                .Should()
+                .HaveMessage("[CreateActionResult] Model state is invalid. 1 errors in ModelState was founded")
+                .WithLevel(Serilog.Events.LogEventLevel.Error);
         }
 
         [Fact]
@@ -90,14 +107,17 @@ namespace BrainstormSessions.Test.UnitTests
             mockRepo.Setup(repo => repo.GetByIdAsync(testSessionId))
                 .ReturnsAsync(GetTestSessions().FirstOrDefault(
                     s => s.Id == testSessionId));
-            var controller = new SessionController(mockRepo.Object);
+            var controller = new SessionController(mockRepo.Object, _logger);
 
             // Act
             var result = await controller.Index(testSessionId);
 
             // Assert
-            var logEntries = _appender.GetEvents();
-            Assert.True(logEntries.Count(l => l.Level == Level.Debug) == 2, "Expected 2 Debug messages in the logs");
+            InMemorySink.Instance
+                .Should()
+                .Match(i => i.LogEvents.
+                            Select(l => l.Level == Serilog.Events.LogEventLevel.Debug)
+                            .Count() == 2);
         }
 
         private List<BrainstormSession> GetTestSessions()
