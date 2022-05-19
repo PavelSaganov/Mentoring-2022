@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JsonSerialization", "JsonSe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerializationLibrary", "SerializationLibrary\SerializationLibrary.csproj", "{B544BCE0-7FD8-4857-A63B-331E43200098}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ISerializableImplementation", "ISerializableImplementation\ISerializableImplementation.csproj", "{5146F884-A874-4636-9675-10DE5C4FE7AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{B544BCE0-7FD8-4857-A63B-331E43200098}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B544BCE0-7FD8-4857-A63B-331E43200098}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B544BCE0-7FD8-4857-A63B-331E43200098}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5146F884-A874-4636-9675-10DE5C4FE7AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5146F884-A874-4636-9675-10DE5C4FE7AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5146F884-A874-4636-9675-10DE5C4FE7AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5146F884-A874-4636-9675-10DE5C4FE7AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
