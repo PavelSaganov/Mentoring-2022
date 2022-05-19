@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31624.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinarySerializaton", "BinarySerializaton\BinarySerializaton.csproj", "{9F155040-E7CF-4831-B080-FBA7EDDF0141}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinarySerializaton", "BinarySerializaton\BinarySerializaton.csproj", "{9F155040-E7CF-4831-B080-FBA7EDDF0141}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XmlSerialization", "XmlSerialization\XmlSerialization.csproj", "{88D72C33-CDC8-4A69-932E-F20DDD0BA4DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XmlSerialization", "XmlSerialization\XmlSerialization.csproj", "{88D72C33-CDC8-4A69-932E-F20DDD0BA4DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonSerialization", "JsonSerialization\JsonSerialization.csproj", "{28971E34-3B4D-4DCE-A95D-5A67E11CFD81}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JsonSerialization", "JsonSerialization\JsonSerialization.csproj", "{28971E34-3B4D-4DCE-A95D-5A67E11CFD81}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerializationLibrary", "SerializationLibrary\SerializationLibrary.csproj", "{B544BCE0-7FD8-4857-A63B-331E43200098}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{28971E34-3B4D-4DCE-A95D-5A67E11CFD81}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28971E34-3B4D-4DCE-A95D-5A67E11CFD81}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28971E34-3B4D-4DCE-A95D-5A67E11CFD81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B544BCE0-7FD8-4857-A63B-331E43200098}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B544BCE0-7FD8-4857-A63B-331E43200098}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B544BCE0-7FD8-4857-A63B-331E43200098}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B544BCE0-7FD8-4857-A63B-331E43200098}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
