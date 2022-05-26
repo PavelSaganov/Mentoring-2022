@@ -4,7 +4,7 @@ namespace StorageLibrary.Factory
 {
     public class PatentCreator : IDocumentCreator
     {
-        public IDocumentType Create()
+        public AbstractDocument Create()
         {
             return new Patent();
         }

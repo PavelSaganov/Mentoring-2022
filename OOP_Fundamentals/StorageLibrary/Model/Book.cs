@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace StorageLibrary.Model
 {
-    public class Book : IDocumentType
+    public class Book : AbstractDocument
     {
-        public int ISBN { get; set; }
+        public int ISBN { get => Id; set { Id = value; } }
         public string Title { get; set; }
         public IEnumerable<string> Authors { get; set; }
         public int NumberOfPages { get; set; }

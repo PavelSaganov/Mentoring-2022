@@ -4,7 +4,7 @@ namespace StorageLibrary.Factory
 {
     public class BookCreator : IDocumentCreator
     {
-        public IDocumentType Create()
+        public AbstractDocument Create()
         {
             return new Book();
         }

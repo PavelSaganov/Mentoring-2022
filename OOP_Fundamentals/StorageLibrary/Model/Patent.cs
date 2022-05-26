@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace StorageLibrary.Model
 {
-    public class Patent : IDocumentType
+    public class Patent : AbstractDocument
     {
         public int Id { get; set; }
         public string Title { get; set; }

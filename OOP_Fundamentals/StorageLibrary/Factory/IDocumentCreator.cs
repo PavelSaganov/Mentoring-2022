@@ -4,6 +4,6 @@ namespace StorageLibrary.Factory
 {
     public interface IDocumentCreator
     {
-        public IDocumentType Create();
+        public AbstractDocument Create();
     }
 }
