@@ -2,8 +2,9 @@
 
 namespace StorageLibrary.Factory
 {
-    public interface IDocumentCreator
+    public interface IDocumentCreator<out TDocument>
+        where TDocument : AbstractDocument
     {
-        public AbstractDocument Create();
+        public TDocument Create();
     }
 }

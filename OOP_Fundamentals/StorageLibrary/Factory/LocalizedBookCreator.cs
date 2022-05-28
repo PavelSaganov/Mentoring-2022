@@ -2,9 +2,9 @@
 
 namespace StorageLibrary.Factory
 {
-    public class LocalizedBookCreator : IDocumentCreator
+    public class LocalizedBookCreator : IDocumentCreator<LocalizedBook>
     {
-        public AbstractDocument Create()
+        public LocalizedBook Create()
         {
             return new LocalizedBook();
         }
