@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using StorageLibrary.Factory;
 using StorageLibrary.Model;
 using StorageLibrary.Repositories.JsonRepository;
+using StorageLibrary.Service;
+using StorageLibrary.Service.CacheServices;
 
 namespace UI_Console
 {
@@ -12,76 +14,85 @@ namespace UI_Console
         {
             #region Patent test
             var patentCreator = new PatentCreator();
+            var jsonPatentRepository = new JsonPatentRepository();
+            var patentCacheService = new PatentCacheService();
+            var patentService = new PatentService(jsonPatentRepository, patentCacheService);
             Console.WriteLine("Getting test patents...");
             var patents = GetTestDocuments(patentCreator);
             Console.WriteLine($"Documents were created:\n1 - {patents[0]}\n2 - {patents[1]}");
-            var jsonPatentRepository = new JsonPatentRepository();
-            Console.WriteLine("Saving documents to json...");
-            SaveToStorageTest(patents, jsonPatentRepository);
+            Console.WriteLine("Saving documents to json and cache...");
+            SaveToStorageTest(patents, patentService);
 
-            Console.WriteLine("Reading documents from json...");
-            var p1 = jsonPatentRepository.Read(patents[0].Id);
-            Console.WriteLine($"{p1} was readed from json");
-            var p2 = jsonPatentRepository.Read(patents[1].Id);
-            Console.WriteLine($"{p2} was readed from json");
+            Console.WriteLine("Reading documents from json/cache...");
+            var p1 = patentService.Read(patents[0].Id);
+            Console.WriteLine($"{p1} was readed from json/cache");
+            var p2 = patentService.Read(patents[1].Id);
+            Console.WriteLine($"{p2} was readed from json/cache");
             #endregion
 
 
             #region Book test
             var bookCreator = new BookCreator();
+            var jsonBookRepository = new JsonBookRepository();
+            var bookCacheService = new BookCacheService();
+            var bookService = new BookService(jsonBookRepository, bookCacheService);
+
             Console.WriteLine("Getting test books...");
             var books = GetTestDocuments(bookCreator);
             Console.WriteLine($"Documents were created: 1 - {books[0]}\n2 - {books[1]}");
-            var jsonBookRepository = new JsonBookRepository();
-            Console.WriteLine("Saving documents to json...");
-            SaveToStorageTest(books, jsonBookRepository);
+            Console.WriteLine("Saving documents to json and cache...");
+            SaveToStorageTest(books, bookService);
 
-            Console.WriteLine("Reading documents from json...");
-            var b1 = jsonPatentRepository.Read(books[0].ISBN);
-            Console.WriteLine($"{b1} was readed from json");
-            var b2 = jsonPatentRepository.Read(books[1].ISBN);
-            Console.WriteLine($"{b2} was readed from json");
+            Console.WriteLine("Reading documents from json/cache...");
+            var b1 = bookService.Read(books[0].ISBN);
+            Console.WriteLine($"{b1} was readed from json/cache");
+            var b2 = bookService.Read(books[1].ISBN);
+            Console.WriteLine($"{b2} was readed from json/cache");
             #endregion
 
 
             #region Localized books test
             var localizedBookCreator = new LocalizedBookCreator();
+            var jsonLocalizedBookRepository = new JsonLocalizedBookRepository();
+            var localizedBookCacheService = new LocalizedBookCacheService();
+            var localizedBooktService = new LocalizedBookService(jsonLocalizedBookRepository, localizedBookCacheService);
             Console.WriteLine("Getting test localizedBooks...");
             var localizedBooks = GetTestDocuments(localizedBookCreator);
             Console.WriteLine($"Documents were created: 1 - {localizedBooks[0]}\n2 - {localizedBooks[1]}");
-            var jsonLocalizedBookRepository = new JsonLocalizedBookRepository();
-            Console.WriteLine("Saving documents to json...");
-            SaveToStorageTest(localizedBooks, jsonLocalizedBookRepository);
+            Console.WriteLine("Saving documents to json and cache...");
+            SaveToStorageTest(localizedBooks, localizedBooktService);
 
-            Console.WriteLine("Reading documents from json...");
-            var lb1 = jsonPatentRepository.Read(localizedBooks[0].ISBN);
-            Console.WriteLine($"{lb1} was readed from json");
-            var lb2 = jsonPatentRepository.Read(localizedBooks[1].ISBN);
-            Console.WriteLine($"{lb2} was readed from json");
+            Console.WriteLine("Reading documents from json/cache...");
+            var lb1 = localizedBooktService.Read(localizedBooks[0].ISBN);
+            Console.WriteLine($"{lb1} was readed from json/cache");
+            var lb2 = localizedBooktService.Read(localizedBooks[1].ISBN);
+            Console.WriteLine($"{lb2} was readed from json/cache");
             #endregion
 
             #region Magazine test
             var magazineCreator = new MagazineCreator();
+            var jsonMagazineRepository = new JsonMagazineRepository();
+            var magazineCacheService = new MagazineCacheService();
+            var magazinetService = new MagazineService(jsonMagazineRepository, magazineCacheService);
             Console.WriteLine("Getting test magazines...");
             var magazines = GetTestDocuments(magazineCreator);
             Console.WriteLine($"Documents were created: 1 - {magazines[0]}\n2 - {magazines[1]}");
-            var jsonMagazineRepository = new JsonMagazineRepository();
-            Console.WriteLine("Saving documents to json...");
-            SaveToStorageTest(magazines, jsonMagazineRepository);
+            Console.WriteLine("Saving documents to json and cache...");
+            SaveToStorageTest(magazines, magazinetService);
 
-            Console.WriteLine("Reading documents from json...");
-            var m1 = jsonPatentRepository.Read(magazines[0].ReleaseNumber);
-            Console.WriteLine($"{m1} was readed from json");
-            var m2 = jsonPatentRepository.Read(magazines[1].ReleaseNumber);
-            Console.WriteLine($"{m2} was readed from json");
+            Console.WriteLine("Reading documents from json/cache...");
+            var m1 = magazinetService.Read(magazines[0].ReleaseNumber);
+            Console.WriteLine($"{m1} was readed from json/cache");
+            var m2 = magazinetService.Read(magazines[1].ReleaseNumber);
+            Console.WriteLine($"{m2} was readed from json/cache");
             #endregion
         }
 
-        private static void SaveToStorageTest<TDocument>(List<TDocument> list, IJsonDocumentRepository<TDocument> jsonRepository)
+        private static void SaveToStorageTest<TDocument>(List<TDocument> list, IDocumentService<TDocument> service)
         where TDocument : AbstractDocument
         {
-            jsonRepository.Create(list[0]);
-            jsonRepository.Create(list[1]);
+            service.Create(list[0]);
+            service.Create(list[1]);
         }
 
         #region Create test data methods
