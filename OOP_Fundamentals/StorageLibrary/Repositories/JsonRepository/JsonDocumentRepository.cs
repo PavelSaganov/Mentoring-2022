@@ -9,13 +9,19 @@ namespace StorageLibrary.Repositories.JsonRepository
     {
         public void Create(TEntity entity)
         {
+            var typeName = typeof(TEntity).Name;
+            if (typeName.Contains('`')) typeName = typeName.Substring(0, typeName.IndexOf("`"));
+
             var json = JsonConvert.SerializeObject(entity);
-            File.WriteAllText($"${nameof(TEntity)}_#{entity.Id}", json);
+            File.WriteAllText($"{typeName}_#{entity.Id}.json", json);
         }
 
         public TEntity Read(int uniqueId)
         {
-            using (StreamReader r = new StreamReader($"{nameof(TEntity)}_#{uniqueId}.json"))
+            var typeName = typeof(TEntity).Name;
+            if (typeName.Contains('`')) typeName = typeName.Substring(0, typeName.IndexOf("`"));
+
+            using (StreamReader r = new StreamReader($"{typeName}_#{uniqueId}.json"))
             {
                 string json = r.ReadToEnd();
                 var item = JsonConvert.DeserializeObject<TEntity>(json);

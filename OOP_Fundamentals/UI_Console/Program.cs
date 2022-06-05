@@ -13,10 +13,10 @@ namespace UI_Console
         static void Main(string[] args)
         {
             #region Patent test
-            var patentCreator = new PatentCreator();
-            var jsonPatentRepository = new JsonPatentRepository();
-            var patentCacheService = new PatentCacheService();
-            var patentService = new PatentService(jsonPatentRepository, patentCacheService);
+            var patentCreator = new DocumentCreator<Patent>();
+            var jsonPatentRepository = new JsonDocumentRepository<Patent>();
+            var patentCacheService = new CacheService<Patent>();
+            var patentService = new DocumentService<Patent>(jsonPatentRepository, patentCacheService);
             Console.WriteLine("Getting test patents...");
             var patents = GetTestDocuments(patentCreator);
             Console.WriteLine($"Documents were created:\n1 - {patents[0]}\n2 - {patents[1]}");
@@ -32,10 +32,10 @@ namespace UI_Console
 
 
             #region Book test
-            var bookCreator = new BookCreator();
-            var jsonBookRepository = new JsonBookRepository();
+            var bookCreator = new DocumentCreator<Book>();
+            var jsonBookRepository = new JsonDocumentRepository<Book>();
             var bookCacheService = new BookCacheService();
-            var bookService = new BookService(jsonBookRepository, bookCacheService);
+            var bookService = new DocumentService<Book>(jsonBookRepository, bookCacheService);
 
             Console.WriteLine("Getting test books...");
             var books = GetTestDocuments(bookCreator);
@@ -52,10 +52,10 @@ namespace UI_Console
 
 
             #region Localized books test
-            var localizedBookCreator = new LocalizedBookCreator();
-            var jsonLocalizedBookRepository = new JsonLocalizedBookRepository();
-            var localizedBookCacheService = new LocalizedBookCacheService();
-            var localizedBooktService = new LocalizedBookService(jsonLocalizedBookRepository, localizedBookCacheService);
+            var localizedBookCreator = new DocumentCreator<LocalizedBook>();
+            var jsonLocalizedBookRepository = new JsonDocumentRepository<LocalizedBook>();
+            var localizedBookCacheService = new CacheService<LocalizedBook>();
+            var localizedBooktService = new DocumentService<LocalizedBook>(jsonLocalizedBookRepository, localizedBookCacheService);
             Console.WriteLine("Getting test localizedBooks...");
             var localizedBooks = GetTestDocuments(localizedBookCreator);
             Console.WriteLine($"Documents were created: 1 - {localizedBooks[0]}\n2 - {localizedBooks[1]}");
@@ -70,10 +70,10 @@ namespace UI_Console
             #endregion
 
             #region Magazine test
-            var magazineCreator = new MagazineCreator();
-            var jsonMagazineRepository = new JsonMagazineRepository();
-            var magazineCacheService = new MagazineCacheService();
-            var magazinetService = new MagazineService(jsonMagazineRepository, magazineCacheService);
+            var magazineCreator = new DocumentCreator<Magazine>();
+            var jsonMagazineRepository = new JsonDocumentRepository<Magazine>();
+            var magazineCacheService = new CacheService<Magazine>();
+            var magazinetService = new DocumentService<Magazine>(jsonMagazineRepository, magazineCacheService);
             Console.WriteLine("Getting test magazines...");
             var magazines = GetTestDocuments(magazineCreator);
             Console.WriteLine($"Documents were created: 1 - {magazines[0]}\n2 - {magazines[1]}");
