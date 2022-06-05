@@ -1,26 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 using Newtonsoft.Json;
 using StorageLibrary.Model;
 
 namespace StorageLibrary.Repositories.JsonRepository
 {
-    public class JsonBookRepository : IJsonDocumentRepository<Book>
+    public class JsonBookRepository : IJsonDocumentRepository<AbstractDocument>
     {
-        public void Create(Book entity)
+        public void Create(AbstractDocument entity)
         {
             var json = JsonConvert.SerializeObject(entity);
-            File.WriteAllText($"Book_#{entity.ISBN}", json);
+            var typeOfEntity = entity.GetType();
+            var nameOfEntityClass = typeOfEntity.Name;
+
+            File.WriteAllText($"{nameOfEntityClass}_#{entity.Id}", json);
         }
 
-        public Book Read(int uniqueId)
+        public AbstractDocument Read(int uniqueId)
         {
             using (StreamReader r = new StreamReader($"Book_#{uniqueId}.json"))
             {
                 string json = r.ReadToEnd();
-                var item = JsonConvert.DeserializeObject<Book>(json);
+                var item = JsonConvert.DeserializeObject<AbstractDocument>(json);
                 return item;
             }
         }

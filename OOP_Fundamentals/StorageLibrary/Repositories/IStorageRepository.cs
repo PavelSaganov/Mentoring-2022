@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using StorageLibrary.Model;
-
-namespace StorageLibrary.Repositories
+﻿namespace StorageLibrary.Repositories
 {
     public interface IStorageRepository<TEntity>
     {
