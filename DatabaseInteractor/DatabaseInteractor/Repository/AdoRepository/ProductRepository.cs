@@ -8,10 +8,10 @@ using DatabaseInteractor.Models;
 
 namespace DatabaseInteractor.Repository.AdoRepository
 {
-    public class ProductRepository
+    public class ProductRepository : IRepositoryAsync<Product>
     {
         private readonly string _connectionString;
-        private readonly string _tableName = "Product";
+        private const string _tableName = "Product";
 
         public ProductRepository(string connectionString)
         {
@@ -21,13 +21,13 @@ namespace DatabaseInteractor.Repository.AdoRepository
         public async Task<int> CreateAsync(Product model)
         {
             int idOfCreated = 0;
-            using (var connection = new SqlConnection(_connectionString))
+            await using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
                 string commandString = $"INSERT INTO {_tableName} (Name, Description, Weight, Height, Width, Length) " +
                 "VALUES (@Name, @Description, @Weight, @Height, @Width, @Length); SELECT SCOPE_IDENTITY();";
 
-                using var command = new SqlCommand(commandString, connection);
+                await using var command = new SqlCommand(commandString, connection);
                 command.Parameters.AddWithValue("@Name", model.Name);
                 command.Parameters.AddWithValue("@Description", model.Description);
                 command.Parameters.AddWithValue("@Weight", model.Weight);
@@ -47,11 +47,11 @@ namespace DatabaseInteractor.Repository.AdoRepository
 
         public async Task DeleteAsync(int id)
         {
-            using var connection = new SqlConnection(_connectionString);
+            await using var connection = new SqlConnection(_connectionString);
             await connection.OpenAsync();
             string commandString = $"DELETE FROM {_tableName} WHERE Id = @ID";
 
-            using var command = new SqlCommand(commandString, connection);
+            await using var command = new SqlCommand(commandString, connection);
             command.Parameters.AddWithValue("@ID", id);
             await command.ExecuteNonQueryAsync();
         }
@@ -70,6 +70,13 @@ namespace DatabaseInteractor.Repository.AdoRepository
                 {
                     while (reader.Read())
                     {
+                        var a = reader["Id"];
+                        var Name = reader["Name"];
+                        var Description = reader["Description"];
+                        var Weight = reader["Weight"];
+                        var Height = reader["Height"];
+                        var Width = reader["Width"];
+                        var Length = reader["Length"];
                         returnedList.Add(
                             new Product
                             {
@@ -88,18 +95,23 @@ namespace DatabaseInteractor.Repository.AdoRepository
             return returnedList.AsQueryable();
         }
 
+        public IQueryable<Product> GetAll(Dictionary<string, object> properties)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<Product> GetByIdAsync(int id)
         {
             Product returnedEntity = null;
-            using (var connection = new SqlConnection(_connectionString))
+            await using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
                 string commandString = $"SELECT Id, Name, Description, Weight, Height, Width, Length FROM {_tableName} WHERE Id = @ID";
 
-                using var command = new SqlCommand(commandString, connection);
+                await using var command = new SqlCommand(commandString, connection);
                 command.Parameters.AddWithValue("@ID", id);
 
-                using var reader = await command.ExecuteReaderAsync();
+                await using var reader = await command.ExecuteReaderAsync();
                 while (await reader.ReadAsync())
                 {
                     returnedEntity = new Product
@@ -120,13 +132,13 @@ namespace DatabaseInteractor.Repository.AdoRepository
 
         public async Task UpdateAsync(Product model)
         {
-            using var connection = new SqlConnection(_connectionString);
+            await using var connection = new SqlConnection(_connectionString);
             await connection.OpenAsync();
             string commandString = $"UPDATE {_tableName} " +
             "SET Name = @Name, Description = @Description, Weight = @Weight, Height = @Height, Width = @Width, Length = @Length " +
             "WHERE Id = @ID";
 
-            using var command = new SqlCommand(commandString, connection);
+            await using var command = new SqlCommand(commandString, connection);
 
             command.Parameters.AddWithValue("@ID", model.Id);
             command.Parameters.AddWithValue("@Name", model.Name);

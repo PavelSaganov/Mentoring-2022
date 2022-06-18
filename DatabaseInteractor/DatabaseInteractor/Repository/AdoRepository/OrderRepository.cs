@@ -13,7 +13,7 @@ namespace DatabaseInteractor.Repository.AdoRepository
     public class OrderRepository : IRepositoryAsync<Order>
     {
         private readonly string _connectionString;
-        private readonly string _tableName = "Order";
+        private const string _tableName = "[dbo].[Order]";
 
         public OrderRepository(string connectionString)
         {
@@ -23,13 +23,13 @@ namespace DatabaseInteractor.Repository.AdoRepository
         public async Task<int> CreateAsync(Order model)
         {
             int idOfCreated = 0;
-            using (var connection = new SqlConnection(_connectionString))
+            await using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
                 string commandString = $"INSERT INTO {_tableName} (Status, CreatedDate, UpdatedDate, ProductId) " +
                 "VALUES (@Status, @CreatedDate, @UpdatedDate, @ProductId); SELECT SCOPE_IDENTITY();";
 
-                using var command = new SqlCommand(commandString, connection);
+                await using var command = new SqlCommand(commandString, connection);
                 command.Parameters.AddWithValue("@Status", model.Status);
                 command.Parameters.AddWithValue("@CreatedDate", model.CreatedDate);
                 command.Parameters.AddWithValue("@UpdatedDate", model.UpdatedDate);
@@ -47,11 +47,11 @@ namespace DatabaseInteractor.Repository.AdoRepository
 
         public async Task DeleteAsync(int id)
         {
-            using var connection = new SqlConnection(_connectionString);
+            await using var connection = new SqlConnection(_connectionString);
             await connection.OpenAsync();
             string commandString = $"DELETE FROM {_tableName} WHERE Id = @ID";
 
-            using var command = new SqlCommand(commandString, connection);
+            await using var command = new SqlCommand(commandString, connection);
             command.Parameters.AddWithValue("@ID", id);
             await command.ExecuteNonQueryAsync();
         }
@@ -124,15 +124,15 @@ namespace DatabaseInteractor.Repository.AdoRepository
         public async Task<Order> GetByIdAsync(int id)
         {
             Order returnedEntity = null;
-            using (var connection = new SqlConnection(_connectionString))
+            await using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
                 string commandString = $"SELECT Id,Status, CreatedDate, UpdatedDate, ProductId FROM {_tableName} WHERE Id = @ID";
 
-                using var command = new SqlCommand(commandString, connection);
+                await using var command = new SqlCommand(commandString, connection);
                 command.Parameters.AddWithValue("@ID", id);
 
-                using var reader = await command.ExecuteReaderAsync();
+                await using var reader = await command.ExecuteReaderAsync();
                 while (await reader.ReadAsync())
                 {
                     returnedEntity = new Order
@@ -151,13 +151,13 @@ namespace DatabaseInteractor.Repository.AdoRepository
 
         public async Task UpdateAsync(Order model)
         {
-            using var connection = new SqlConnection(_connectionString);
+            await using var connection = new SqlConnection(_connectionString);
             await connection.OpenAsync();
             string commandString = $"UPDATE {_tableName} " +
             "SET Status = @Status, CreatedDate = @CreatedDate, UpdatedDate = @UpdatedDate, ProductId = @ProductId " +
             "WHERE Id = @ID";
 
-            using var command = new SqlCommand(commandString, connection);
+            await using var command = new SqlCommand(commandString, connection);
 
             command.Parameters.AddWithValue("@ID", model.Id);
             command.Parameters.AddWithValue("@Status", model.Status);
