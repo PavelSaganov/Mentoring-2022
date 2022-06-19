@@ -13,7 +13,7 @@ namespace DatabaseInteractor.Repository.AdoRepository
     public class OrderRepository : IRepositoryAsync<Order>
     {
         private readonly string _connectionString;
-        private const string _tableName = "[dbo].[Order]";
+        private const string _tableName = "Order";
 
         public OrderRepository(string connectionString)
         {
@@ -62,7 +62,7 @@ namespace DatabaseInteractor.Repository.AdoRepository
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                string commandString = $"SELECT Id, Status, CreatedDate, UpdatedDate, ProductId FROM {_tableName}";
+                string commandString = $"SELECT Id, Status, CreatedDate, UpdatedDate, ProductId FROM [{_tableName}]";
 
                 using var command = new SqlCommand(commandString, connection);
                 using var reader = command.ExecuteReader();

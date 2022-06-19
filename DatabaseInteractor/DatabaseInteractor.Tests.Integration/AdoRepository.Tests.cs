@@ -14,7 +14,8 @@ namespace DatabaseInteractor.Tests.Integration
 {
     public class Tests
     {
-        private const string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Integrated Security=True;database=ProductDB;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False";
+        private const string connectionStringToCreateDB = "Data Source=DESKTOP-ER2HSUN;Integrated Security=True";
+        private const string connectionString = "Data Source=DESKTOP-ER2HSUN;Initial Catalog=ProductDB;Integrated Security=True";
         private IRepositoryAsync<Order> orderRepository;
         private IRepositoryAsync<Product> productRepository;
         private List<Order> baseOrderList;
@@ -24,7 +25,7 @@ namespace DatabaseInteractor.Tests.Integration
         public void Setup()
         {
             #region Create db
-            using var myConn = new SqlConnection(connectionString);
+            using var myConn = new SqlConnection(connectionStringToCreateDB);
             string createScript = "CREATE DATABASE ProductDB";
 
             var myCommand = new SqlCommand(createScript, myConn);
@@ -57,56 +58,56 @@ namespace DatabaseInteractor.Tests.Integration
                 new Order()
                 {
                     Id = 1,
-                    CreatedDate = DateTime.Parse("1/2/1998 12:00:00 AM"),
-                    UpdatedDate = DateTime.Parse("1/2/1998 12:00:00 AM"),
+                    CreatedDate = DateTime.Parse("2/1/1998 12:00:00 AM"),
+                    UpdatedDate = DateTime.Parse("2/1/1998 12:00:00 AM"),
                     Status = Status.InProgress,
                     ProductId = 1,
                 },
                 new Order()
                 {
                     Id = 2,
-                    CreatedDate = DateTime.Parse("1/2/1998 12:00:00 AM"),
-                    UpdatedDate = DateTime.Parse("1/2/1998 12:00:00 AM"),
+                    CreatedDate = DateTime.Parse("2/1/1998 12:00:00 AM"),
+                    UpdatedDate = DateTime.Parse("2/1/1998 12:00:00 AM"),
                     Status = Status.Loading,
                     ProductId = 2,
                 },
                 new Order()
                 {
                     Id = 3,
-                    CreatedDate = DateTime.Parse("1/2/1998 12:00:00 AM"),
-                    UpdatedDate = DateTime.Parse("1/2/1998 12:00:00 AM"),
+                    CreatedDate = DateTime.Parse("2/1/1998 12:00:00 AM"),
+                    UpdatedDate = DateTime.Parse("2/1/1998 12:00:00 AM"),
                     Status = Status.Unloading,
                     ProductId = 3,
                 },
                 new Order()
                 {
                     Id = 4,
-                    CreatedDate = DateTime.Parse("1/2/1998 12:00:00 AM"),
-                    UpdatedDate = DateTime.Parse("1/2/1998 12:00:00 AM"),
+                    CreatedDate = DateTime.Parse("2/1/1998 12:00:00 AM"),
+                    UpdatedDate = DateTime.Parse("2/1/1998 12:00:00 AM"),
                     Status = Status.InProgress,
                     ProductId = 1,
                 },
                 new Order()
                 {
                     Id = 5,
-                    CreatedDate = DateTime.Parse("1/2/1998 12:00:00 AM"),
-                    UpdatedDate = DateTime.Parse("1/2/1998 12:00:00 AM"),
+                    CreatedDate = DateTime.Parse("2/1/1998 12:00:00 AM"),
+                    UpdatedDate = DateTime.Parse("2/1/1998 12:00:00 AM"),
                     Status = Status.Arrived,
                     ProductId = 1,
                 },
                 new Order()
                 {
                     Id = 6,
-                    CreatedDate = DateTime.Parse("1/2/1998 12:00:00 AM"),
-                    UpdatedDate = DateTime.Parse("1/2/1998 12:00:00 AM"),
+                    CreatedDate = DateTime.Parse("2/1/1998 12:00:00 AM"),
+                    UpdatedDate = DateTime.Parse("2/1/1998 12:00:00 AM"),
                     Status = Status.Unloading,
                     ProductId = 4,
                 },
                 new Order()
                 {
                     Id = 7,
-                    CreatedDate = DateTime.Parse("1/2/1998 12:00:00 AM"),
-                    UpdatedDate = DateTime.Parse("1/2/1998 12:00:00 AM"),
+                    CreatedDate = DateTime.Parse("2/1/1998 12:00:00 AM"),
+                    UpdatedDate = DateTime.Parse("2/1/1998 12:00:00 AM"),
                     Status = Status.Arrived,
                     ProductId = 4,
                 },
@@ -165,6 +166,8 @@ namespace DatabaseInteractor.Tests.Integration
                 }
             };
             #endregion
+
+            myConn.Close();
         }
 
         [Test]
@@ -197,9 +200,9 @@ namespace DatabaseInteractor.Tests.Integration
         public void TearDown()
         {
             using var myConn = new SqlConnection(connectionString);
-            string createScript = "DROP DATABASE ProductDB";
+            string dropScript = "DROP DATABASE ProductDB";
 
-            var myCommand = new SqlCommand(createScript, myConn);
+            var myCommand = new SqlCommand(dropScript, myConn);
             myConn.Open();
             myCommand.ExecuteNonQuery();
         }
