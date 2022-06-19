@@ -9,6 +9,7 @@ using DatabaseInteractor.Repository;
 using DatabaseInteractor.Repository.AdoRepository;
 using NUnit.Framework;
 using FluentAssertions;
+using System.Threading.Tasks;
 
 namespace DatabaseInteractor.Tests.Integration
 {
@@ -184,6 +185,24 @@ namespace DatabaseInteractor.Tests.Integration
         }
 
         [Test]
+        public void GetAll_Valid_ReturnsListOfOrdersFilteredByProperties()
+        {
+            // Arrange
+            var expected = baseOrderList.Where(o => o.Status == Status.Loading && o.ProductId == 2).ToList();
+            var properties = new Dictionary<string, object>()
+            {
+                { "Status", 1 },
+                { "ProductId", 2 }
+            };
+
+            // Act
+            var actual = orderRepository.GetAll(properties).ToList();
+
+            // Assert
+            actual.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
         public void GetAll_Valid_ReturnsListOfProducts()
         {
             // Arrange
@@ -195,6 +214,105 @@ namespace DatabaseInteractor.Tests.Integration
             // Assert
             actual.Should().BeEquivalentTo(expected);
         }
+
+        [Test]
+        public async Task Create_Valid_ReturnsListWithCreatedProduct()
+        {
+            // Arrange
+            var newModel = new Product() { Description = "NewProd", Height = 0, Length = 0, Name = "NewProd", Weight = 0, Width = 0 };
+
+            // Act
+            var idOfCreated = await productRepository.CreateAsync(newModel);
+            var actual = await productRepository.GetByIdAsync(idOfCreated);
+
+            // Assert
+            actual.Should().BeEquivalentTo(newModel);
+        }
+
+        [Test]
+        public async Task GetById_Valid_ReturnsOrderWithId_1()
+        {
+            // Arrange
+            int id = 1;
+
+            var expected = new Order()
+            {
+                Id = 1,
+                CreatedDate = DateTime.Parse("2/1/1998 12:00:00 AM"),
+                UpdatedDate = DateTime.Parse("2/1/1998 12:00:00 AM"),
+                Status = Status.InProgress,
+                ProductId = 1,
+            };
+
+            // Act
+            var actual = await orderRepository.GetByIdAsync(id);
+
+            // Assert
+            actual.Should().BeEquivalentTo(expected);
+        }
+
+
+
+        [Test]
+        public async Task Delete_Valid_ReturnsListWithoutOrder()
+        {
+            // Arrange
+            var id = 5;
+
+            var expected = baseOrderList;
+            expected.RemoveAt(id - 1);
+
+            // Act
+            await orderRepository.DeleteAsync(id);
+            var actual = orderRepository.GetAll().ToList();
+
+            // Assert
+            actual.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public async Task GetById_Valid_ReturnsProductWithId_1()
+        {
+            // Arrange
+            int id = 1;
+
+            var expected = new Product()
+            {
+                Id = id,
+                Name = "Prod1",
+                Description = "Desc1",
+                Weight = 3,
+                Height = 3,
+                Width = 5,
+                Length = 5
+            };
+
+            // Act
+            var actual = await productRepository.GetByIdAsync(id);
+
+            // Assert
+            actual.Should().BeEquivalentTo(expected);
+        }
+
+
+
+        [Test]
+        public async Task Delete_Valid_ReturnsListWithoutProduct()
+        {
+            // Arrange
+            var id = 5;
+
+            var expected = baseProductList;
+            expected.RemoveAt(id - 1);
+
+            // Act
+            await productRepository.DeleteAsync(id);
+            var actual = productRepository.GetAll().ToList();
+
+            // Assert
+            actual.Should().BeEquivalentTo(expected);
+        }
+
 
         [TearDown]
         public void TearDown()
