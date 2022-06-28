@@ -5,12 +5,11 @@ using DatabaseInteractor.Models.Enums;
 
 namespace DatabaseInteractor.Models
 {
-    public class Order
+    public class Order : AbstractEntity
     {
-        public int Id { get; set; }
-        public Status Status { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public DateTime UpdatedDate { get; set; }
-        public int ProductId { get; set; }
+        public virtual Status Status { get; set; }
+        public virtual DateTime CreatedDate { get; set; }
+        public virtual DateTime UpdatedDate { get; set; }
+        public virtual int ProductId { get; set; }
     }
 }
