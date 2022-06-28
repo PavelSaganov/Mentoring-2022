@@ -27,10 +27,13 @@ namespace DatabaseInteractor.Tests.Integration
         {
             #region Create db
             using var myConn = new SqlConnection(connectionStringToCreateDB);
+            string dropScript = "DROP DATABASE IF EXISTS ProductDB";
             string createScript = "CREATE DATABASE ProductDB";
 
+            var dropCommand = new SqlCommand(dropScript, myConn);
             var myCommand = new SqlCommand(createScript, myConn);
             myConn.Open();
+            dropCommand.ExecuteNonQuery();
             myCommand.ExecuteNonQuery();
             #endregion
 
@@ -168,7 +171,6 @@ namespace DatabaseInteractor.Tests.Integration
             };
             #endregion
 
-            myConn.Close();
         }
 
         [Test]
@@ -219,7 +221,7 @@ namespace DatabaseInteractor.Tests.Integration
         public async Task Create_Valid_ReturnsListWithCreatedProduct()
         {
             // Arrange
-            var newModel = new Product() { Description = "NewProd", Height = 0, Length = 0, Name = "NewProd", Weight = 0, Width = 0 };
+            var newModel = new Product() { Id = 6, Description = "NewProd", Height = 0, Length = 0, Name = "NewProd", Weight = 0, Width = 0 };
 
             // Act
             var idOfCreated = await productRepository.CreateAsync(newModel);
@@ -317,12 +319,12 @@ namespace DatabaseInteractor.Tests.Integration
         [TearDown]
         public void TearDown()
         {
-            using var myConn = new SqlConnection(connectionString);
-            string dropScript = "DROP DATABASE ProductDB";
+            //using var myConn = new SqlConnection(connectionString);
+            //string dropScript = "DROP DATABASE ProductDB";
 
-            var myCommand = new SqlCommand(dropScript, myConn);
-            myConn.Open();
-            myCommand.ExecuteNonQuery();
+            //var myCommand = new SqlCommand(dropScript, myConn);
+            //myConn.Open();
+            //myCommand.ExecuteNonQuery();
         }
     }
 }

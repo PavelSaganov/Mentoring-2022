@@ -8,44 +8,61 @@ namespace DatabaseInteractor.Repository.NHibernate
 {
     public class OrderRepository : IRepositoryAsync<Order>
     {
-        private ISession session;
+        private ISessionFactory factory;
 
-        public OrderRepository(ISession session)
+        public OrderRepository(ISessionFactory factory)
         {
-            this.session = session;
+                this.factory = factory;
         }
 
         public async Task<int> CreateAsync(Order model)
         {
-            var idOfCreated = await session.SaveAsync(model);
-
-            return (int)idOfCreated;
+            using (var session = factory.OpenSession())
+            using (ITransaction transaction = session.BeginTransaction())
+            {
+                var idOfCreated = await session.SaveAsync(model);
+                
+                return (int)idOfCreated;
+            }
         }
 
         public async Task DeleteAsync(int id)
         {
-            var item = await GetByIdAsync(id);
-            await session.DeleteAsync(item);
+            using (var session = factory.OpenSession())
+            using (ITransaction transaction = session.BeginTransaction())
+            {
+                var item = await GetByIdAsync(id);
+                await session.DeleteAsync(item);
+                await transaction.CommitAsync();
+            }
         }
 
         public IQueryable<Order> GetAll()
         {
+            using var session = factory.OpenSession();
             return session.Query<Order>();
         }
 
         public IQueryable<Order> GetAll(Dictionary<string, object> properties)
         {
+            using var session = factory.OpenSession();
             return session.Query<Order>();
         }
 
         public async Task<Order> GetByIdAsync(int id)
         {
-            return await session.GetAsync<Order>(id);
+            using (var session = factory.OpenSession())
+                return await session.GetAsync<Order>(id);
         }
 
         public async Task UpdateAsync(Order model)
         {
-            await session.UpdateAsync(model);
+            using (var session = factory.OpenSession())
+            using (ITransaction transaction = session.BeginTransaction())
+            {
+                await session.UpdateAsync(model);
+                await transaction.CommitAsync();
+            }
         }
     }
 }

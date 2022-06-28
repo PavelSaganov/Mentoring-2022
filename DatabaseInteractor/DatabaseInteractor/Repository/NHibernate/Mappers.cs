@@ -1,4 +1,5 @@
 ﻿using DatabaseInteractor.Models;
+using DatabaseInteractor.Models.Enums;
 using FluentNHibernate.Mapping;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace DatabaseInteractor.Repository.NHibernate
     {
         public ProductMap()
         {
-            Id(x => x.Id).GeneratedBy.Guid();
+            Id(x => x.Id).GeneratedBy.Identity();
             Map(x => x.Height);
             Map(x => x.Width);
             Map(x => x.Weight);
@@ -24,8 +25,8 @@ namespace DatabaseInteractor.Repository.NHibernate
     {
         public OrderMap()
         {
-            Id(x => x.Id).GeneratedBy.Guid();
-            Map(x => x.Status);
+            Id(x => x.Id).GeneratedBy.Identity();
+            Map(x => x.Status).CustomType<Status>();
             Map(x => x.CreatedDate);
             Map(x => x.UpdatedDate);
             Map(x => x.ProductId);

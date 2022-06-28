@@ -28,28 +28,15 @@ namespace DatabaseInteractor.Tests.Integration
         [SetUp]
         public void Setup()
         {
-            var config = Fluently.Configure().
-                Database(
-                    MsSqlConfiguration
-                        .MsSql2012
-                        .ConnectionString(x => x
-                            .Server(@".\DESKTOP-ER2HSUN")
-                            .Database("ProductDB")
-                            .TrustedConnection())
-                            .UseReflectionOptimizer())
-                .Mappings(m => m.FluentMappings.AddFromAssemblyOf<ProductMap>())
-                .Mappings(m => m.FluentMappings.AddFromAssemblyOf<OrderMap>())
-                .BuildConfiguration();
-
-            ISessionFactory factory = config.BuildSessionFactory();
-            ISession session = factory.OpenSession();
-
             #region Create db
             using var myConn = new SqlConnection(connectionStringToCreateDB);
+            string dropScript = "DROP DATABASE IF EXISTS ProductDB";
             string createScript = "CREATE DATABASE ProductDB";
 
+            var dropCommand = new SqlCommand(dropScript, myConn);
             var myCommand = new SqlCommand(createScript, myConn);
             myConn.Open();
+            dropCommand.ExecuteNonQuery();
             myCommand.ExecuteNonQuery();
             #endregion
 
@@ -68,8 +55,24 @@ namespace DatabaseInteractor.Tests.Integration
             #endregion
 
             #region Set Repositories
-            orderRepository = new OrderRepository(session);
-            productRepository = new ProductRepository(session);
+
+            var config = Fluently.Configure().
+                Database(
+                    MsSqlConfiguration
+                        .MsSql2012
+                        .ConnectionString(x => x
+                            .Server(@"DESKTOP-ER2HSUN")
+                            .Database("ProductDB")
+                            .TrustedConnection())
+                            .UseReflectionOptimizer())
+                .Mappings(m => m.FluentMappings.AddFromAssemblyOf<ProductMap>())
+                .Mappings(m => m.FluentMappings.AddFromAssemblyOf<OrderMap>())
+                .BuildConfiguration();
+
+            ISessionFactory factory = config.BuildSessionFactory();
+
+            orderRepository = new OrderRepository(factory);
+            productRepository = new ProductRepository(factory);
             #endregion
 
             #region Set base test data
@@ -270,8 +273,6 @@ namespace DatabaseInteractor.Tests.Integration
             actual.Should().BeEquivalentTo(expected);
         }
 
-
-
         [Test]
         public async Task Delete_Valid_ReturnsListWithoutOrder()
         {
@@ -336,12 +337,12 @@ namespace DatabaseInteractor.Tests.Integration
         [TearDown]
         public void TearDown()
         {
-            using var myConn = new SqlConnection(connectionString);
-            string dropScript = "DROP DATABASE ProductDB";
+            //using var myConn = new SqlConnection(connectionString);
+            //string dropScript = "DROP DATABASE IF EXISTS ProductDB";
 
-            var myCommand = new SqlCommand(dropScript, myConn);
-            myConn.Open();
-            myCommand.ExecuteNonQuery();
+            //var myCommand = new SqlCommand(dropScript, myConn);
+            //myConn.Open();
+            //myCommand.ExecuteNonQuery();
         }
     }
 }

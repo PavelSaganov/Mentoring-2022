@@ -52,6 +52,7 @@ namespace DatabaseInteractor.Repository.AdoRepository
             await using var command = new SqlCommand(commandString, connection);
             command.Parameters.AddWithValue("@ID", id);
             await command.ExecuteNonQueryAsync();
+            connection.Close();
         }
 
         public IQueryable<Order> GetAll()
