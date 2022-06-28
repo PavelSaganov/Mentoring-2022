@@ -4,11 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DatabaseInteractor.Config.NHibernate
+namespace DatabaseInteractor.Repository.NHibernate
 {
-    public class CustomerMap : ClassMap<Product>
+    public class ProductMap : ClassMap<Product>
     {
-        public CustomerMap()
+        public ProductMap()
         {
             Id(x => x.Id).GeneratedBy.Guid();
             Map(x => x.Height);

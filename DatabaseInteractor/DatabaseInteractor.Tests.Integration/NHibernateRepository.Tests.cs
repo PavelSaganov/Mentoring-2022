@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
@@ -6,14 +6,17 @@ using System.Linq;
 using DatabaseInteractor.Models;
 using DatabaseInteractor.Models.Enums;
 using DatabaseInteractor.Repository;
-using DatabaseInteractor.Repository.AdoRepository;
 using NUnit.Framework;
 using FluentAssertions;
 using System.Threading.Tasks;
+using FluentNHibernate.Cfg;
+using FluentNHibernate.Cfg.Db;
+using DatabaseInteractor.Repository.NHibernate;
+using NHibernate;
 
 namespace DatabaseInteractor.Tests.Integration
 {
-    public class AdoRepositoryTests
+    public class NHibernateTests
     {
         private const string connectionStringToCreateDB = "Data Source=DESKTOP-ER2HSUN;Integrated Security=True";
         private const string connectionString = "Data Source=DESKTOP-ER2HSUN;Initial Catalog=ProductDB;Integrated Security=True";
@@ -25,6 +28,22 @@ namespace DatabaseInteractor.Tests.Integration
         [SetUp]
         public void Setup()
         {
+            var config = Fluently.Configure().
+                Database(
+                    MsSqlConfiguration
+                        .MsSql2012
+                        .ConnectionString(x => x
+                            .Server(@".\DESKTOP-ER2HSUN")
+                            .Database("ProductDB")
+                            .TrustedConnection())
+                            .UseReflectionOptimizer())
+                .Mappings(m => m.FluentMappings.AddFromAssemblyOf<ProductMap>())
+                .Mappings(m => m.FluentMappings.AddFromAssemblyOf<OrderMap>())
+                .BuildConfiguration();
+
+            ISessionFactory factory = config.BuildSessionFactory();
+            ISession session = factory.OpenSession();
+
             #region Create db
             using var myConn = new SqlConnection(connectionStringToCreateDB);
             string createScript = "CREATE DATABASE ProductDB";
@@ -49,8 +68,8 @@ namespace DatabaseInteractor.Tests.Integration
             #endregion
 
             #region Set Repositories
-            orderRepository = new OrderRepository(connectionString);
-            productRepository = new ProductRepository(connectionString);
+            orderRepository = new OrderRepository(session);
+            productRepository = new ProductRepository(session);
             #endregion
 
             #region Set base test data
