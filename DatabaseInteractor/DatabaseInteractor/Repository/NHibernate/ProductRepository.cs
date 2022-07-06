@@ -17,7 +17,16 @@ namespace DatabaseInteractor.Repository.NHibernate
 
         public async Task<int> CreateAsync(Product model)
         {
-            using (var session = factory.GetCurrentSession() ?? factory.OpenSession())
+            ISession session;
+            try
+            {
+                session = factory.GetCurrentSession();
+            }
+            catch
+            {
+                session = factory.OpenSession();
+            }
+
             using (ITransaction transaction = session.BeginTransaction())
             {
                 var idOfCreated = await session.SaveAsync(model);
@@ -28,7 +37,16 @@ namespace DatabaseInteractor.Repository.NHibernate
 
         public async Task DeleteAsync(int id)
         {
-            using (var session = factory.GetCurrentSession() ?? factory.OpenSession())
+            ISession session;
+            try
+            {
+                session = factory.GetCurrentSession();
+            }
+            catch
+            {
+                session = factory.OpenSession();
+            }
+
             using (ITransaction transaction = session.BeginTransaction())
             {
                 var item = await GetByIdAsync(id);
@@ -39,25 +57,61 @@ namespace DatabaseInteractor.Repository.NHibernate
 
         public IQueryable<Product> GetAll()
         {
-            using (var session = factory.GetCurrentSession() ?? factory.OpenSession())
-                return session.Query<Product>();
+            ISession session;
+            try
+            {
+                session = factory.GetCurrentSession();
+            }
+            catch
+            {
+                session = factory.OpenSession();
+            }
+
+            return session.Query<Product>();
         }
 
         public IQueryable<Product> GetAll(Dictionary<string, object> properties)
         {
-            using (var session = factory.GetCurrentSession() ?? factory.OpenSession())
-                return session.Query<Product>();
+            ISession session;
+            try
+            {
+                session = factory.GetCurrentSession();
+            }
+            catch
+            {
+                session = factory.OpenSession();
+            }
+
+            return session.Query<Product>();
         }
 
         public async Task<Product> GetByIdAsync(int id)
         {
-            using (var session = factory.GetCurrentSession() ?? factory.OpenSession())
-                return await session.GetAsync<Product>(id);
+            ISession session;
+            try
+            {
+                session = factory.GetCurrentSession();
+            }
+            catch
+            {
+                session = factory.OpenSession();
+            }
+
+            return await session.GetAsync<Product>(id);
         }
 
         public async Task UpdateAsync(Product model)
         {
-            using (var session = factory.GetCurrentSession() ?? factory.OpenSession())
+            ISession session;
+            try
+            {
+                session = factory.GetCurrentSession();
+            }
+            catch
+            {
+                session = factory.OpenSession();
+            }
+
             using (ITransaction transaction = session.BeginTransaction())
             {
                 await session.UpdateAsync(model);

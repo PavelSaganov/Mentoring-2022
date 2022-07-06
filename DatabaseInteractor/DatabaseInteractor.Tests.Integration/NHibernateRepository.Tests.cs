@@ -61,11 +61,12 @@ namespace DatabaseInteractor.Tests.Integration
                     MsSqlConfiguration
                         .MsSql2012
                         .ConnectionString(connectionString))
+                .CurrentSessionContext("web")
                 .Mappings(m => m.FluentMappings.AddFromAssemblyOf<ProductMap>())
                 .Mappings(m => m.FluentMappings.AddFromAssemblyOf<OrderMap>())
                 .BuildConfiguration();
 
-            ISessionFactory factory = config.BuildSessionFactory();
+            var factory = config.BuildSessionFactory();
 
             orderRepository = new OrderRepository(factory);
             productRepository = new ProductRepository(factory);
