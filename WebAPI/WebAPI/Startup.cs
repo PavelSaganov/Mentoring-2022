@@ -25,8 +25,8 @@ namespace WebAPI
                 (Configuration.GetConnectionString("Default"))
             );
 
-            services.AddSwaggerGen();
             services.AddControllers();
+            services.AddSwaggerGen();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -41,6 +41,7 @@ namespace WebAPI
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Web API");
             });
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
@@ -51,16 +52,6 @@ namespace WebAPI
             {
                 endpoints.MapControllers();
             });
-
-            InitializeDB();
-        }
-
-        public void InitializeDB()
-        {
-            using var myConn = new SqlConnection(Configuration.GetConnectionString("Default"));
-            var createTablesScript = File.ReadAllText("../../../CreateTables.sql");
-            var createTablesCommand = new SqlCommand(createTablesScript, myConn);
-            createTablesCommand.ExecuteNonQuery();
         }
     }
 }

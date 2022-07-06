@@ -1,7 +1,10 @@
-﻿namespace WebAPI.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace WebAPI.Models
 {
 	public class Products
 	{
+		[Key]
 		public int ProductID { get; set; }
 		public string ProductName { get; set; }
 		public int SupplierID { get; set; }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Linq;
 using WebAPI.EFRepository;
 using WebAPI.Models;
@@ -17,21 +18,34 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult Read(int id)
+        public Categories Read(int id)
         {
-            return View(apiContext.Categories.FirstOrDefault(c => c.CategoryID == id));
+            return apiContext.Categories.FirstOrDefault(c => c.CategoryID == id);
+        }
+
+        [HttpGet]
+        [Route("GetAll")]
+        public IList<Categories> GetAll ()
+        {
+            return apiContext.Categories.ToList();
         }
 
         [HttpPost]
-        public ActionResult Create(Categories model)
+        public OkResult Create(string CategoryName, string Description)
         {
+            var model = new Categories()
+            {
+                CategoryName = CategoryName,
+                Description = Description,
+            };
+
             apiContext.Categories.Add(model);
             apiContext.SaveChanges();
             return Ok();
         }
 
         [HttpPut]
-        public ActionResult Update(Categories model)
+        public OkResult Update(Categories model)
         {
             apiContext.Categories.Update(model);
             apiContext.SaveChanges();
@@ -39,7 +53,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpDelete]
-        public ActionResult Delete(int id)
+        public OkResult Delete(int id)
         {
             var model = apiContext.Categories.FirstOrDefault(c => c.CategoryID == id);
             apiContext.Categories.Remove(model);
