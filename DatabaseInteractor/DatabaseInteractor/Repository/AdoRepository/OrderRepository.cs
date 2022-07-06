@@ -24,7 +24,7 @@ namespace DatabaseInteractor.Repository.AdoRepository
             await using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
-                string commandString = $"INSERT INTO {_tableName} (Status, CreatedDate, UpdatedDate, ProductId) " +
+                string commandString = $"INSERT INTO [{_tableName}] (Status, CreatedDate, UpdatedDate, ProductId) " +
                 "VALUES (@Status, @CreatedDate, @UpdatedDate, @ProductId); SELECT SCOPE_IDENTITY();";
 
                 await using var command = new SqlCommand(commandString, connection);
@@ -47,7 +47,7 @@ namespace DatabaseInteractor.Repository.AdoRepository
         {
             await using var connection = new SqlConnection(_connectionString);
             await connection.OpenAsync();
-            string commandString = $"DELETE FROM {_tableName} WHERE Id = @ID";
+            string commandString = $"DELETE FROM [{_tableName}] WHERE Id = @ID";
 
             await using var command = new SqlCommand(commandString, connection);
             command.Parameters.AddWithValue("@ID", id);
@@ -126,7 +126,7 @@ namespace DatabaseInteractor.Repository.AdoRepository
             await using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
-                string commandString = $"SELECT Id,Status, CreatedDate, UpdatedDate, ProductId FROM {_tableName} WHERE Id = @ID";
+                string commandString = $"SELECT Id,Status, CreatedDate, UpdatedDate, ProductId FROM [{_tableName}] WHERE Id = @ID";
 
                 await using var command = new SqlCommand(commandString, connection);
                 command.Parameters.AddWithValue("@ID", id);

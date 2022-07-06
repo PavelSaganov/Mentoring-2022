@@ -18,8 +18,8 @@ namespace DatabaseInteractor.Tests.Integration
 {
     public class NHibernateTests
     {
-        private const string connectionStringToCreateDB = "Data Source=DESKTOP-ER2HSUN;Integrated Security=True";
-        private const string connectionString = "Data Source=DESKTOP-ER2HSUN;Initial Catalog=ProductDB;Integrated Security=True";
+        private const string connectionStringToCreateDB = "Data Source=EPBYGOMW0254;Integrated Security=True";
+        private const string connectionString = "Data Source=EPBYGOMW0254;Initial Catalog=ProductDB;Integrated Security=True";
         private IRepositoryAsync<Order> orderRepository;
         private IRepositoryAsync<Product> productRepository;
         private List<Order> baseOrderList;
@@ -60,11 +60,7 @@ namespace DatabaseInteractor.Tests.Integration
                 Database(
                     MsSqlConfiguration
                         .MsSql2012
-                        .ConnectionString(x => x
-                            .Server(@"DESKTOP-ER2HSUN")
-                            .Database("ProductDB")
-                            .TrustedConnection())
-                            .UseReflectionOptimizer())
+                        .ConnectionString(connectionString))
                 .Mappings(m => m.FluentMappings.AddFromAssemblyOf<ProductMap>())
                 .Mappings(m => m.FluentMappings.AddFromAssemblyOf<OrderMap>())
                 .BuildConfiguration();
@@ -337,12 +333,7 @@ namespace DatabaseInteractor.Tests.Integration
         [TearDown]
         public void TearDown()
         {
-            //using var myConn = new SqlConnection(connectionString);
-            //string dropScript = "DROP DATABASE IF EXISTS ProductDB";
-
-            //var myCommand = new SqlCommand(dropScript, myConn);
-            //myConn.Open();
-            //myCommand.ExecuteNonQuery();
+            SqlConnection.ClearAllPools();
         }
     }
 }

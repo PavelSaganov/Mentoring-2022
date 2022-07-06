@@ -15,8 +15,8 @@ namespace DatabaseInteractor.Tests.Integration
 {
     public class AdoRepositoryTests
     {
-        private const string connectionStringToCreateDB = "Data Source=DESKTOP-ER2HSUN;Integrated Security=True";
-        private const string connectionString = "Data Source=DESKTOP-ER2HSUN;Initial Catalog=ProductDB;Integrated Security=True";
+        private const string connectionStringToCreateDB = "Data Source=EPBYGOMW0254;Integrated Security=True";
+        private const string connectionString = "Data Source=EPBYGOMW0254;Initial Catalog=ProductDB;Integrated Security=True";
         private IRepositoryAsync<Order> orderRepository;
         private IRepositoryAsync<Product> productRepository;
         private List<Order> baseOrderList;
@@ -319,12 +319,7 @@ namespace DatabaseInteractor.Tests.Integration
         [TearDown]
         public void TearDown()
         {
-            //using var myConn = new SqlConnection(connectionString);
-            //string dropScript = "DROP DATABASE ProductDB";
-
-            //var myCommand = new SqlCommand(dropScript, myConn);
-            //myConn.Open();
-            //myCommand.ExecuteNonQuery();
+            SqlConnection.ClearAllPools();
         }
     }
 }
