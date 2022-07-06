@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Data.SqlClient;
+using System.IO;
 using WebAPI.EFRepository;
 
 namespace WebAPI
@@ -17,15 +19,16 @@ namespace WebAPI
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApiContext>(opt => opt.UseInMemoryDatabase("Northwind"));
+            services.AddDbContext<ApiContext>(opt => opt.UseSqlServer
+                (Configuration.GetConnectionString("Default"))
+            );
+
             services.AddSwaggerGen();
             services.AddControllers();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -48,6 +51,16 @@ namespace WebAPI
             {
                 endpoints.MapControllers();
             });
+
+            InitializeDB();
+        }
+
+        public void InitializeDB()
+        {
+            using var myConn = new SqlConnection(Configuration.GetConnectionString("Default"));
+            var createTablesScript = File.ReadAllText("../../../CreateTables.sql");
+            var createTablesCommand = new SqlCommand(createTablesScript, myConn);
+            createTablesCommand.ExecuteNonQuery();
         }
     }
 }
