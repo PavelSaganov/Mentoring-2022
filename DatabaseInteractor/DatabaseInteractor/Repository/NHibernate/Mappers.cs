@@ -1,9 +1,6 @@
 ﻿using DatabaseInteractor.Models;
 using DatabaseInteractor.Models.Enums;
 using FluentNHibernate.Mapping;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DatabaseInteractor.Repository.NHibernate
 {

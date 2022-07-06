@@ -5,12 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentNHibernate" Version="3.1.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
+    <Compile Remove="Repository\EFRepository\**" />
+    <EmbeddedResource Remove="Repository\EFRepository\**" />
+    <None Remove="Repository\EFRepository\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Repository\EFRepository\" />
+    <PackageReference Include="FluentNHibernate" Version="3.1.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
   </ItemGroup>
 
 </Project>

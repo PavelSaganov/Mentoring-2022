@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using DatabaseInteractor.Models;
 using DatabaseInteractor.Models.Enums;
 using DatabaseInteractor.Repository;
 using DatabaseInteractor.Repository.AdoRepository;
-using NUnit.Framework;
 using FluentAssertions;
-using System.Threading.Tasks;
+using NUnit.Framework;
 
 namespace DatabaseInteractor.Tests.Integration
 {

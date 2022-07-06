@@ -1,8 +1,8 @@
-﻿using DatabaseInteractor.Models;
-using NHibernate;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DatabaseInteractor.Models;
+using NHibernate;
 
 namespace DatabaseInteractor.Repository.NHibernate
 {
@@ -17,15 +17,7 @@ namespace DatabaseInteractor.Repository.NHibernate
 
         public async Task<int> CreateAsync(Product model)
         {
-            ISession session;
-            try
-            {
-                session = factory.GetCurrentSession();
-            }
-            catch
-            {
-                session = factory.OpenSession();
-            }
+            var session = GetOrCreateSession();
 
             using (ITransaction transaction = session.BeginTransaction())
             {
@@ -37,15 +29,7 @@ namespace DatabaseInteractor.Repository.NHibernate
 
         public async Task DeleteAsync(int id)
         {
-            ISession session;
-            try
-            {
-                session = factory.GetCurrentSession();
-            }
-            catch
-            {
-                session = factory.OpenSession();
-            }
+            var session = GetOrCreateSession();
 
             using (ITransaction transaction = session.BeginTransaction())
             {
@@ -57,50 +41,37 @@ namespace DatabaseInteractor.Repository.NHibernate
 
         public IQueryable<Product> GetAll()
         {
-            ISession session;
-            try
-            {
-                session = factory.GetCurrentSession();
-            }
-            catch
-            {
-                session = factory.OpenSession();
-            }
+            var session = GetOrCreateSession();
 
             return session.Query<Product>();
         }
 
         public IQueryable<Product> GetAll(Dictionary<string, object> properties)
         {
-            ISession session;
-            try
-            {
-                session = factory.GetCurrentSession();
-            }
-            catch
-            {
-                session = factory.OpenSession();
-            }
+            var session = GetOrCreateSession();
 
             return session.Query<Product>();
         }
 
         public async Task<Product> GetByIdAsync(int id)
         {
-            ISession session;
-            try
-            {
-                session = factory.GetCurrentSession();
-            }
-            catch
-            {
-                session = factory.OpenSession();
-            }
+            var session = GetOrCreateSession();
 
             return await session.GetAsync<Product>(id);
         }
 
         public async Task UpdateAsync(Product model)
+        {
+            var session = GetOrCreateSession();
+
+            using (ITransaction transaction = session.BeginTransaction())
+            {
+                await session.UpdateAsync(model);
+                await transaction.CommitAsync();
+            }
+        }
+
+        private ISession GetOrCreateSession()
         {
             ISession session;
             try
@@ -112,11 +83,7 @@ namespace DatabaseInteractor.Repository.NHibernate
                 session = factory.OpenSession();
             }
 
-            using (ITransaction transaction = session.BeginTransaction())
-            {
-                await session.UpdateAsync(model);
-                await transaction.CommitAsync();
-            }
+            return session;
         }
     }
 }

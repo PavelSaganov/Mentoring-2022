@@ -1,9 +1,8 @@
-﻿using DatabaseInteractor.Models;
-using NHibernate;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using DatabaseInteractor.Models;
+using NHibernate;
 
 namespace DatabaseInteractor.Repository.NHibernate
 {
@@ -18,15 +17,7 @@ namespace DatabaseInteractor.Repository.NHibernate
 
         public async Task<int> CreateAsync(Order model)
         {
-            ISession session;
-            try
-            {
-                session = factory.GetCurrentSession();
-            }
-            catch
-            {
-                session = factory.OpenSession();
-            }
+            var session = GetOrCreateSession();
 
             using (ITransaction transaction = session.BeginTransaction())
             {
@@ -38,15 +29,7 @@ namespace DatabaseInteractor.Repository.NHibernate
 
         public async Task DeleteAsync(int id)
         {
-            ISession session;
-            try
-            {
-                session = factory.GetCurrentSession();
-            }
-            catch
-            {
-                session = factory.OpenSession();
-            }
+            var session = GetOrCreateSession();
 
             using (ITransaction transaction = session.BeginTransaction())
             {
@@ -58,77 +41,43 @@ namespace DatabaseInteractor.Repository.NHibernate
 
         public IQueryable<Order> GetAll()
         {
-            ISession session;
-            try
-            {
-                session = factory.GetCurrentSession();
-            }
-            catch
-            {
-                session = factory.OpenSession();
-            }
+            var session = GetOrCreateSession();
 
             return session.Query<Order>();
         }
 
         public IQueryable<Order> GetAll(Dictionary<string, object> properties)
         {
-            ISession session;
-            try
-            {
-                session = factory.GetCurrentSession();
-            }
-            catch
-            {
-                session = factory.OpenSession();
-            }
+            var session = GetOrCreateSession();
 
-            var queryStringBuilder = new StringBuilder("EXEC FilterBy");
+            var query = "EXEC FilterBy " + string.Join(", ", properties.Select(p => $"@{p.Key}=:{p.Key}"));
 
-            foreach (var prop in properties)
-            {
-                queryStringBuilder.Append($" :{prop.Key}");
-            }
+            var result = session.CreateSQLQuery(query)
+                .AddEntity(typeof(Order))
+                .SetParameter("Status", 1)
+                .SetParameter("ProductId", 2)
+                .List<Order>();
 
-            var sqlQuery = session.CreateSQLQuery(queryStringBuilder.ToString());
-            sqlQuery.AddEntity(typeof(List<Order>));
+            return result.AsQueryable();
+        }
 
-            foreach (var prop in properties)
-            {
-                sqlQuery.SetParameter(prop.Key, prop.Value);
-            }
+        private ISession GetOrCreateSession()
+        {
+            var session = GetOrCreateSession();
 
-            var result = sqlQuery.Enumerable<Order>().AsQueryable();
-
-            return result;
+            return session;
         }
 
         public async Task<Order> GetByIdAsync(int id)
         {
-            ISession session;
-            try
-            {
-                session = factory.GetCurrentSession();
-            }
-            catch
-            {
-                session = factory.OpenSession();
-            }
+            var session = GetOrCreateSession();
 
             return await session.GetAsync<Order>(id);
         }
 
         public async Task UpdateAsync(Order model)
         {
-            ISession session;
-            try
-            {
-                session = factory.GetCurrentSession();
-            }
-            catch
-            {
-                session = factory.OpenSession();
-            }
+            var session = GetOrCreateSession();
 
             using (ITransaction transaction = session.BeginTransaction())
             {

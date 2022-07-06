@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using DatabaseInteractor.Models;
 using DatabaseInteractor.Models.Enums;
 using DatabaseInteractor.Repository;
-using NUnit.Framework;
+using DatabaseInteractor.Repository.NHibernate;
 using FluentAssertions;
-using System.Threading.Tasks;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
-using DatabaseInteractor.Repository.NHibernate;
+using NUnit.Framework;
 
 namespace DatabaseInteractor.Tests.Integration
 {
