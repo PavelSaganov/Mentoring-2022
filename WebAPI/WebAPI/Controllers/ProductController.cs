@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using WebAPI.EFRepository;
@@ -20,7 +19,7 @@ namespace WebAPI.Controllers
         [HttpGet]
         public Products Read(int id)
         {
-            return apiContext.Products.FirstOrDefault(c => c.CategoryID == id);
+            return apiContext.Products.FirstOrDefault(c => c.ProductID == id);
         }
 
         [HttpGet]

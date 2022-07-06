@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using WebAPI.EFRepository;
@@ -25,7 +24,7 @@ namespace WebAPI.Controllers
 
         [HttpGet]
         [Route("GetAll")]
-        public IList<Categories> GetAll ()
+        public IList<Categories> GetAll()
         {
             return apiContext.Categories.ToList();
         }

@@ -256,19 +256,19 @@ CREATE TABLE "Orders" (
 		"CustomerID"
 	) REFERENCES "dbo"."Customers" (
 		"CustomerID"
-	),
+	) ON DELETE CASCADE,
 	CONSTRAINT "FK_Orders_Employees" FOREIGN KEY 
 	(
 		"EmployeeID"
 	) REFERENCES "dbo"."Employees" (
 		"EmployeeID"
-	),
+	) ON DELETE CASCADE,
 	CONSTRAINT "FK_Orders_Shippers" FOREIGN KEY 
 	(
 		"ShipVia"
 	) REFERENCES "dbo"."Shippers" (
 		"ShipperID"
-	)
+	) ON DELETE CASCADE
 )
 GO
  CREATE  INDEX "CustomerID" ON "dbo"."Orders"("CustomerID")
@@ -308,13 +308,13 @@ CREATE TABLE "Products" (
 		"CategoryID"
 	) REFERENCES "dbo"."Categories" (
 		"CategoryID"
-	),
+	) ON DELETE CASCADE,
 	CONSTRAINT "FK_Products_Suppliers" FOREIGN KEY 
 	(
 		"SupplierID"
 	) REFERENCES "dbo"."Suppliers" (
 		"SupplierID"
-	),
+	) ON DELETE CASCADE,
 	CONSTRAINT "CK_Products_UnitPrice" CHECK (UnitPrice >= 0),
 	CONSTRAINT "CK_ReorderLevel" CHECK (ReorderLevel >= 0),
 	CONSTRAINT "CK_UnitsInStock" CHECK (UnitsInStock >= 0),
@@ -348,13 +348,13 @@ CREATE TABLE "Order Details" (
 		"OrderID"
 	) REFERENCES "dbo"."Orders" (
 		"OrderID"
-	),
+	) ON DELETE CASCADE,
 	CONSTRAINT "FK_Order_Details_Products" FOREIGN KEY 
 	(
 		"ProductID"
 	) REFERENCES "dbo"."Products" (
 		"ProductID"
-	),
+	) ON DELETE CASCADE,
 	CONSTRAINT "CK_Discount" CHECK (Discount >= 0 and (Discount <= 1)),
 	CONSTRAINT "CK_Quantity" CHECK (Quantity > 0),
 	CONSTRAINT "CK_UnitPrice" CHECK (UnitPrice >= 0)
@@ -9277,7 +9277,7 @@ ALTER TABLE CustomerCustomerDemo
 		[CustomerTypeID]
 	) REFERENCES [dbo].[CustomerDemographics] (
 		[CustomerTypeID]
-	)
+	) ON DELETE CASCADE
 GO
 
 ALTER TABLE CustomerCustomerDemo
@@ -9286,7 +9286,7 @@ ALTER TABLE CustomerCustomerDemo
 		[CustomerID]
 	) REFERENCES [dbo].[Customers] (
 		[CustomerID]
-	)
+	) ON DELETE CASCADE
 GO
 
 ALTER TABLE Region
@@ -9309,7 +9309,7 @@ ALTER TABLE Territories
 		[RegionID]
 	) REFERENCES [dbo].[Region] (
 		[RegionID]
-	)
+	) ON DELETE CASCADE
 GO
 
 ALTER TABLE EmployeeTerritories
@@ -9326,7 +9326,7 @@ ALTER TABLE EmployeeTerritories
 		[EmployeeID]
 	) REFERENCES [dbo].[Employees] (
 		[EmployeeID]
-	)
+	) ON DELETE CASCADE
 GO
 
 
@@ -9336,5 +9336,5 @@ ALTER TABLE EmployeeTerritories
 		[TerritoryID]
 	) REFERENCES [dbo].[Territories] (
 		[TerritoryID]
-	)
+	) ON DELETE CASCADE
 GO
