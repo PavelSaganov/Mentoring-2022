@@ -9,7 +9,7 @@ namespace Client
         {
             while (true)
             {
-                Console.WriteLine("Methods available: Information\nSuccess\nRedirection\nClient error\nServer error");
+                Console.WriteLine("Methods available: Information\nSuccess\nRedirection\nClientError\nServerError");
                 Console.WriteLine("Input method name...");
                 string name = Console.ReadLine();
                 try
