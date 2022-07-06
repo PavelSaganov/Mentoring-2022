@@ -5,7 +5,7 @@
  ### NHibernateTests
  ```
  20     private const string connectionStringToCreateDB = "Data Source=EPBYGOMW0254;Integrated Security=True";
- 21     private const string connectionString = "**Data Source=EPBYGOMW0254**;Initial Catalog=ProductDB;Integrated Security=True";
+ 21     private const string connectionString = Data Source=EPBYGOMW0254;Initial Catalog=ProductDB;Integrated Security=True";
  ```
  ### AdoRepositoryTests
  ```
