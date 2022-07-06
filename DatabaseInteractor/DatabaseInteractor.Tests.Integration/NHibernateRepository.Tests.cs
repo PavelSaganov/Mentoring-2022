@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using DatabaseInteractor.Repository.NHibernate;
-using NHibernate;
 
 namespace DatabaseInteractor.Tests.Integration
 {

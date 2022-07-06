@@ -85,7 +85,13 @@ namespace DatabaseInteractor.Repository.NHibernate
 
             var queryStringBuilder = new StringBuilder("EXEC FilterBy");
 
-            var sqlQuery = session.CreateSQLQuery("EXEC FilterBy");
+            foreach (var prop in properties)
+            {
+                queryStringBuilder.Append($" :{prop.Key}");
+            }
+
+            var sqlQuery = session.CreateSQLQuery(queryStringBuilder.ToString());
+            sqlQuery.AddEntity(typeof(List<Order>));
 
             foreach (var prop in properties)
             {
